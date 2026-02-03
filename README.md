@@ -83,8 +83,8 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## 📧 Contact
 
-**Maintainer:** [belubruh123]
-**Email:** tallplaylin@gmail.com
+**Maintainer:** [Your Name/Username]
+**GitHub:** [Your GitHub Profile URL]
 
 ---
 *Built with ❤️ for the Minecraft Community.*
