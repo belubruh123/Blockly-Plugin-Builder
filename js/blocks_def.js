@@ -51,8 +51,9 @@ export const defineBlocks = (apiData) => {
         },
         compose: function(containerBlock) {
             let itemBlock = containerBlock.getInputTargetBlock('STACK');
-            // Count lines
+            // Collect saved connections
             const connections = [];
+            let i = 1;
             while (itemBlock) {
                 if (itemBlock.type === 'ez_scoreboard_mutator_line') {
                     connections.push(itemBlock.valueConnection_);
@@ -61,6 +62,36 @@ export const defineBlocks = (apiData) => {
             }
             this.lineCount_ = connections.length;
             this.updateShape_();
+            
+            // Restore connections
+            for (let i = 0; i < connections.length; i++) {
+                if (connections[i]) {
+                    const lineInput = this.getInput('LINE' + (i + 1));
+                    const scoreInput = this.getInput('SCORE' + (i + 1));
+                    if (connections[i].line && lineInput) {
+                        lineInput.connection.connect(connections[i].line);
+                    }
+                    if (connections[i].score && scoreInput) {
+                        scoreInput.connection.connect(connections[i].score);
+                    }
+                }
+            }
+        },
+        saveConnections: function(containerBlock) {
+            let itemBlock = containerBlock.getInputTargetBlock('STACK');
+            let i = 1;
+            while (itemBlock) {
+                if (itemBlock.type === 'ez_scoreboard_mutator_line') {
+                    const lineInput = this.getInput('LINE' + i);
+                    const scoreInput = this.getInput('SCORE' + i);
+                    itemBlock.valueConnection_ = {
+                        line: lineInput && lineInput.connection.targetConnection,
+                        score: scoreInput && scoreInput.connection.targetConnection
+                    };
+                    i++;
+                }
+                itemBlock = itemBlock.nextConnection && itemBlock.nextConnection.targetBlock();
+            }
         },
         updateShape_: function() {
             // Remove old inputs
@@ -491,7 +522,6 @@ export const defineBlocks = (apiData) => {
                 this.setNextStatement(true, null);
                 this.setColour(160);
                 this.setTooltip("Sets a sidebar scoreboard. Click the gear icon to add more lines!");
-                this.setMutator(new Blockly.Mutator(['ez_scoreboard_mutator_line']));
             },
             updateShape_: function() {
                 // Remove old inputs if any (handled by mutator mixin in practice, but good for init)
@@ -502,7 +532,12 @@ export const defineBlocks = (apiData) => {
                         this.appendValueInput('SCORE' + i).setCheck("Number").appendField("Score");
                     }
                 }
-            }
+            },
+            mutationToDom: SCOREBOARD_MUTATOR.mutationToDom,
+            domToMutation: SCOREBOARD_MUTATOR.domToMutation,
+            decompose: SCOREBOARD_MUTATOR.decompose,
+            compose: SCOREBOARD_MUTATOR.compose,
+            saveConnections: SCOREBOARD_MUTATOR.saveConnections
         }
     });
 
