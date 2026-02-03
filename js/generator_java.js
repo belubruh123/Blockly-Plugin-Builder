@@ -501,23 +501,43 @@ ${branch}
 
     // --- PAPER SPECIFIC ---
 
-    // --- EVENTS ---
-    javaGenerator.forBlock['paper_event'] = function(block) {
+    // --- EVENTS (Master) ---
+    javaGenerator.forBlock['ez_event_master'] = function(block) {
         const eventType = block.getFieldValue('EVENT_TYPE');
         const statements = javaGenerator.statementToCode(block, 'DO');
-        return `
+        
+        let eventClass = eventType;
+        let eventPackage = ""; 
+
+        // Map simplified names to actual classes/imports if needed
+        // But our Main.java imports .event.player.*, .event.block.*, etc. so simple names often work.
+        // Exception: AsyncChatEvent is in io.papermc...
+        
+        if (eventType === "ServerLoad") {
+            // Special case: PluginEnableEvent
+            return `
     @EventHandler
-    public void on${eventType}(${eventType} event) {
+    public void onPluginEnable(org.bukkit.event.server.PluginEnableEvent event) {
+        // Only run if it's THIS plugin
+        if (event.getPlugin().equals(this)) {
+${statements}
+        }
+    }
+`;
+        } else if (eventType === "AsyncChatEvent") {
+             // Requires io.papermc import or FQN
+             return `
+    @EventHandler
+    public void onChat(io.papermc.paper.event.player.AsyncChatEvent event) {
 ${statements}
     }
 `;
-    };
+        }
 
-    javaGenerator.forBlock['paper_event_entity_death'] = function(block) {
-        const statements = javaGenerator.statementToCode(block, 'DO');
+        // Default Generation
         return `
     @EventHandler
-    public void onEntityDeath(EntityDeathEvent event) {
+    public void on${eventType}(${eventType} event) {
 ${statements}
     }
 `;

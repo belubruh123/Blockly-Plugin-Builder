@@ -35,17 +35,11 @@ const generateToolbox = () => {
 
     // 1. Events (Simplified)
     const eventBlocks = [
-        { "kind": "block", "type": "paper_event" }, // Legacy generic
-        { "kind": "block", "type": "paper_event_entity_death" },
-        // Add dynamic simple events if needed, for now stick to manually defined EZ ones + Generic
+        { "kind": "block", "type": "ez_event_master" }
     ];
-    // Add dynamic events but filtered? No, let's just add them all under "Events" but maybe group them later.
-    // For "Scratch" feel, we want specific events like "When Join".
-    // Let's add the dynamic ones as they are useful.
-    events.forEach(evt => {
-        eventBlocks.push({ "kind": "block", "type": `paper_event_${evt.id.toLowerCase()}` });
-    });
-
+    // We can still add specific dynamic ones if advanced API is on, but user wanted "EVERYTHING IN DROP DOWN".
+    // So let's stick to just the master block for the default view.
+    
     contents.push({
         "kind": "category",
         "name": "Events",

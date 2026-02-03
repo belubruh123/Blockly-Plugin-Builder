@@ -2,37 +2,28 @@
 
 export const defineBlocks = () => {
     
-    // --- EVENTS (Legacy, replaced by dynamic ones mostly) ---
+    // --- EVENTS (Master Block) ---
     Blockly.common.defineBlocks({
-        'paper_event': {
+        'ez_event_master': {
             init: function() {
                 this.appendDummyInput()
                     .appendField("When")
                     .appendField(new Blockly.FieldDropdown([
-                        ["Player Joins", "PlayerJoinEvent"],
+                        ["Player Joins Server", "PlayerJoinEvent"],
+                        ["Player Leaves Server", "PlayerQuitEvent"],
+                        ["Player Chats", "AsyncChatEvent"],
                         ["Player Breaks Block", "BlockBreakEvent"],
-                        ["Player Quits", "PlayerQuitEvent"],
-                        ["Server Loads", "ServerLoad"]
+                        ["Player Places Block", "BlockPlaceEvent"],
+                        ["Player Dies", "PlayerDeathEvent"],
+                        ["Player Clicks / Interacts", "PlayerInteractEvent"],
+                        ["Entity / Mob Dies", "EntityDeathEvent"],
+                        ["Server Starts", "ServerLoad"]
                     ]), "EVENT_TYPE");
                 this.appendStatementInput("DO")
                     .setCheck(null)
                     .appendField("do");
-                this.setColour(230);
-                this.setTooltip("Triggers code when a Minecraft event happens.");
-            }
-        }
-    });
-
-    Blockly.common.defineBlocks({
-        'paper_event_entity_death': {
-            init: function() {
-                this.appendDummyInput()
-                    .appendField("When Entity / Player Dies");
-                this.appendStatementInput("DO")
-                    .setCheck(null)
-                    .appendField("do");
-                this.setColour(230);
-                this.setTooltip("Triggers when any living thing dies.");
+                this.setColour(230); // Event color (Yellow/Orange)
+                this.setTooltip("Triggers when something happens.");
             }
         }
     });
