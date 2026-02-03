@@ -1,0 +1,34 @@
+{
+    "core_blocks": [
+        {
+            "id": "events",
+            "title": "Events",
+            "description": "Triggers that run code when something happens in the game.",
+            "blocks": [
+                {
+                    "type": "paper_event_playerjoinevent",
+                    "desc": "Runs when a player connects to the server."
+                },
+                {
+                    "type": "paper_event_blockbreakevent",
+                    "desc": "Runs when a block is broken."
+                }
+            ]
+        },
+        {
+            "id": "actions",
+            "title": "Actions",
+            "description": "Do things! Teleport, message, give items.",
+            "blocks": [
+                {
+                    "type": "ez_action_message",
+                    "desc": "Sends a message to a player."
+                },
+                {
+                    "type": "ez_action_teleport",
+                    "desc": "Teleports an entity."
+                }
+            ]
+        }
+    ]
+}

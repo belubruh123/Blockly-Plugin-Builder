@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PluginBuilder Documentation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Blockly (Required for rendering examples) -->
+    <script src="https://unpkg.com/blockly/blockly.min.js"></script>
+    
+    <style>
+        /* Custom scrollbar for code blocks */
+        pre::-webkit-scrollbar {
+            height: 8px;
+        }
+        pre::-webkit-scrollbar-track {
+            background: #1f2937; 
+        }
+        pre::-webkit-scrollbar-thumb {
+            background: #4b5563; 
+            border-radius: 4px;
+        }
+        /* Read-only workspace style */
+        .example-workspace {
+            height: 120px;
+            width: 100%;
+            border: 1px solid #374151;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            background-color: #1f2937;
+        }
+    </style>
+</head>
+<body class="bg-gray-950 text-gray-200 font-sans leading-relaxed">
+
+    <!-- Header -->
+    <header class="bg-gray-900 border-b border-gray-800 h-16 flex items-center px-6 justify-between sticky top-0 z-50">
+        <div class="flex items-center gap-3">
+            <div class="w-8 h-8 bg-green-600 rounded flex items-center justify-center font-bold text-white shadow-lg shadow-green-900/20">
+                P
+            </div>
+            <h1 class="text-xl font-bold tracking-tight text-gray-100">Plugin<span class="text-green-500">Docs</span></h1>
+        </div>
+        <div class="flex items-center gap-4">
+            <a href="index.html" class="bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors border border-gray-700">
+                &larr; Back to Editor
+            </a>
+        </div>
+    </header>
+
+    <div class="max-w-7xl mx-auto flex">
+        
+        <!-- Sidebar Navigation -->
+        <aside class="w-64 hidden lg:block h-[calc(100vh-4rem)] overflow-y-auto sticky top-16 border-r border-gray-800 bg-gray-900/50 p-6">
+            <h3 class="font-bold text-gray-100 mb-4 uppercase text-xs tracking-wider">Guide</h3>
+            <ul class="space-y-2 mb-8 text-sm">
+                <li><a href="#intro" class="text-green-500 hover:text-green-400 block">Introduction</a></li>
+            </ul>
+            <h3 class="font-bold text-gray-100 mb-4 uppercase text-xs tracking-wider">Block Reference</h3>
+            <div id="sidebar-links" class="space-y-2 text-sm text-gray-400">
+                <!-- Dynamic Links -->
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-8 lg:p-12 overflow-y-auto" id="docs-content">
+            
+            <!-- Intro (Static) -->
+            <section id="intro" class="mb-16">
+                 <h2 class="text-4xl font-bold text-white mb-6">Welcome to PluginBuilder</h2>
+                 <p class="text-gray-400 text-lg mb-4">
+                    The easiest way to create Minecraft plugins. Scroll down to see visual examples of every block type.
+                </p>
+            </section>
+
+            <!-- Dynamic Content -->
+            <div class="animate-pulse flex space-x-4">
+                <div class="flex-1 space-y-4 py-1">
+                    <div class="h-4 bg-gray-800 rounded w-3/4"></div>
+                    <div class="space-y-2">
+                        <div class="h-4 bg-gray-800 rounded"></div>
+                        <div class="h-4 bg-gray-800 rounded w-5/6"></div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script type="module" src="js/docs_renderer.js"></script>
+</body>
+</html>

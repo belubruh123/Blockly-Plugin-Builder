@@ -1,0 +1,76 @@
+/* Custom styles for Blockly Dark Mode integration */
+
+/* Force Blockly background to match container */
+.blocklySvg {
+    background-color: #111827 !important; /* gray-900 */
+}
+
+/* Toolbox */
+.blocklyToolboxDiv {
+    background-color: #0b0f19 !important; /* gray-950 */
+    border-right: 1px solid #1f2937;
+    color: #e5e7eb;
+}
+
+.blocklyFlyoutBackground {
+    fill: #111827 !important;
+    fill-opacity: 0.9 !important;
+}
+
+/* Text Colors in blocks */
+.blocklyText {
+    fill: #fff !important;
+    font-family: 'Segoe UI', system-ui, sans-serif !important;
+    font-weight: 500;
+}
+
+/* Scrollbars */
+.blocklyScrollbarHandle {
+    fill: #374151 !important;
+}
+
+.blocklyScrollbarHandle:hover {
+    fill: #4b5563 !important;
+}
+
+/* Hide scrollbars completely as requested */
+.blocklyToolboxDiv::-webkit-scrollbar {
+    display: none;
+}
+.blocklyFlyoutScrollbar {
+    display: none !important;
+}
+
+/* Dropdowns */
+.blocklyWidgetDiv .goog-menu {
+    background: #1f2937 !important;
+    border-color: #374151 !important;
+    color: white !important;
+}
+
+.blocklyWidgetDiv .goog-menuitem-content {
+    color: #e5e7eb !important;
+}
+
+.blocklyWidgetDiv .goog-menuitem-highlight,
+.blocklyWidgetDiv .goog-menuitem-hover {
+    background-color: #374151 !important;
+    border-color: #374151 !important;
+}
+
+/* Field Inputs */
+.blocklyHtmlInput {
+    background-color: #374151 !important;
+    color: white !important;
+    border-radius: 4px;
+    font-family: monospace !important;
+}
+
+/* Scrollbar hiding for the tab container */
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+.no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}

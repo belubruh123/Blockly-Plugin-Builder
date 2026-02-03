@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>No-Code Minecraft Plugin Builder (Paper 1.21)</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Blockly -->
+    <script src="https://unpkg.com/blockly/blockly.min.js"></script>
+    
+    <!-- JSZip for Downloading Projects -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="css/style.css">
+    
+    <!-- Tailwind Config for Dark Mode -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        gray: {
+                            850: '#1f2937',
+                            900: '#111827',
+                            950: '#0b0f19',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-950 text-gray-200 h-screen flex flex-col font-sans overflow-hidden">
+
+    <!-- Header -->
+    <header class="bg-gray-900 border-b border-gray-800 h-16 flex items-center px-6 justify-between shrink-0 gap-4">
+        <div class="flex items-center gap-3 shrink-0">
+            <div class="w-8 h-8 bg-green-600 rounded flex items-center justify-center font-bold text-white shadow-lg shadow-green-900/20">
+                P
+            </div>
+            <h1 class="text-xl font-bold tracking-tight text-gray-100 hidden md:block">Plugin<span class="text-green-500">Builder</span></h1>
+        </div>
+
+        <!-- Project Settings -->
+        <div class="flex items-center gap-2 bg-gray-800 p-1.5 rounded-lg border border-gray-700">
+            <div class="flex flex-col px-2">
+                <label class="text-[10px] text-gray-400 uppercase font-bold tracking-wider">Project Name</label>
+                <input type="text" id="project-name" value="MyAwesomePlugin" class="bg-transparent text-sm text-white focus:outline-none w-32 font-medium placeholder-gray-600">
+            </div>
+            <div class="w-px h-8 bg-gray-700"></div>
+            <div class="flex flex-col px-2">
+                <label class="text-[10px] text-gray-400 uppercase font-bold tracking-wider">Author</label>
+                <input type="text" id="project-author" value="Steve" class="bg-transparent text-sm text-white focus:outline-none w-24 placeholder-gray-600">
+            </div>
+            <div class="w-px h-8 bg-gray-700"></div>
+            <div class="flex flex-col px-2">
+                <label class="text-[10px] text-gray-400 uppercase font-bold tracking-wider">Version</label>
+                <input type="text" id="project-version" value="1.0.0" class="bg-transparent text-sm text-white focus:outline-none w-16 placeholder-gray-600">
+            </div>
+        </div>
+
+        <div class="flex items-center gap-4 shrink-0">
+            <button id="btn-generate" class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors border border-gray-600 flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                Refresh Code
+            </button>
+            
+            <button id="btn-download" class="bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors shadow-lg shadow-green-900/20 flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                Download Plugin
+            </button>
+            
+            <div class="h-6 w-px bg-gray-700 mx-2"></div>
+
+            <!-- Save/Load Blocks -->
+            <input type="file" id="file-upload" accept=".json" class="hidden">
+            
+            <button id="btn-save-blocks" class="text-gray-400 hover:text-white p-2 rounded hover:bg-gray-800 transition-colors" title="Save Project File">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+            </button>
+            
+            <button id="btn-load-blocks" class="text-gray-400 hover:text-white p-2 rounded hover:bg-gray-800 transition-colors" title="Load Project File" onclick="document.getElementById('file-upload').click()">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 19a2 2 0 01-2-2V7a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1M5 19h14a2 2 0 002-2v-5a2 2 0 00-2-2H9a2 2 0 00-2 2v5a2 2 0 01-2 2z"></path></svg>
+            </button>
+
+            <a href="docs.html" target="_blank" class="text-gray-400 hover:text-white text-sm transition-colors flex items-center gap-1 ml-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                Help
+            </a>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="flex-1 flex overflow-hidden">
+        
+        <!-- Left: Blockly Editor -->
+        <div class="flex-1 relative border-r border-gray-800 flex flex-col">
+            <div class="bg-gray-900 px-4 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider border-b border-gray-800 flex justify-between items-center shrink-0 h-10">
+                <div class="flex items-center gap-4">
+                    <span>Visual Editor</span>
+                    <!-- Search Input -->
+                    <div class="relative">
+                        <input type="text" id="block-search" placeholder="Search blocks..." class="bg-gray-800 border border-gray-700 text-gray-300 rounded px-2 py-0.5 text-xs focus:outline-none focus:border-green-600 w-48 transition-colors">
+                        <svg class="w-3 h-3 text-gray-500 absolute right-2 top-1 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    </div>
+                </div>
+                <span class="text-gray-600 font-mono text-[10px]">Blockly Geras</span>
+            </div>
+            <div id="blocklyDiv" class="absolute inset-0 top-10"></div>
+        </div>
+
+        <!-- Right: Code Preview -->
+        <div class="w-[500px] flex flex-col bg-gray-900 shrink-0">
+            <!-- Tabs -->
+            <div class="flex bg-gray-950 border-b border-gray-800 overflow-x-auto no-scrollbar" id="file-tabs">
+                <!-- Tab items will be injected here via JS -->
+                <button class="px-4 py-3 text-sm font-medium text-green-500 border-b-2 border-green-500 bg-gray-900 focus:outline-none whitespace-nowrap">Main.java</button>
+            </div>
+
+            <!-- Code Area -->
+            <div class="flex-1 relative group">
+                <textarea id="code-output" class="w-full h-full bg-gray-900 text-gray-300 font-mono text-sm p-4 resize-none focus:outline-none leading-relaxed" spellcheck="false" readonly>
+// Generated code will appear here...
+                </textarea>
+                
+                <button id="btn-copy" class="absolute top-4 right-4 bg-gray-800 hover:bg-gray-700 text-white p-2 rounded opacity-0 group-hover:opacity-100 transition-opacity" title="Copy Code">
+                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                </button>
+            </div>
+            
+            <div class="h-8 bg-green-700 flex items-center px-4 text-xs font-mono text-white justify-between">
+                <span>Status: Ready</span>
+                <span id="file-path-footer">src/main/java/com/example/plugin/Main.java</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Application Entry -->
+    <script type="module" src="js/main.js"></script>
+
+</body>
+</html>
