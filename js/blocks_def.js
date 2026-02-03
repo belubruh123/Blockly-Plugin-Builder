@@ -74,7 +74,8 @@ export const defineBlocks = () => {
         ["Player", "Player"],
         ["Entity", "Entity"],
         ["Location", "Location"],
-        ["ItemStack", "ItemStack"]
+        ["ItemStack", "ItemStack"],
+        ["List", "List"]
     ];
 
     Blockly.common.defineBlocks({
@@ -516,6 +517,89 @@ export const defineBlocks = () => {
                 this.setNextStatement(true, null);
                 this.setColour(160);
                 this.setTooltip("Allows or disallows a player to fly.");
+            }
+        }
+    });
+
+    // --- LOOPS (Extended) ---
+    Blockly.common.defineBlocks({
+        'controls_for_simple': {
+            init: function() {
+                this.appendDummyInput()
+                    .appendField("Count with")
+                    .appendField(new Blockly.FieldTextInput("i"), "VAR")
+                    .appendField("from");
+                this.appendValueInput("FROM")
+                    .setCheck("Number");
+                this.appendDummyInput()
+                    .appendField("to");
+                this.appendValueInput("TO")
+                    .setCheck("Number");
+                this.appendDummyInput()
+                    .appendField("by 1");
+                this.appendStatementInput("DO")
+                    .appendField("do");
+                this.setPreviousStatement(true, null);
+                this.setNextStatement(true, null);
+                this.setColour(120);
+                this.setTooltip("Counts from a number to another number.");
+            }
+        }
+    });
+
+    // --- LISTS ---
+    Blockly.common.defineBlocks({
+        'lists_create_new': {
+            init: function() {
+                this.appendDummyInput()
+                    .appendField("Create New Empty List");
+                this.setOutput(true, "List");
+                this.setColour(260); // List color
+                this.setTooltip("Creates a new empty list (ArrayList).");
+            }
+        }
+    });
+
+    Blockly.common.defineBlocks({
+        'lists_add': {
+            init: function() {
+                this.appendValueInput("LIST")
+                    .setCheck("List")
+                    .appendField("in list");
+                this.appendValueInput("ITEM")
+                    .appendField("add item");
+                this.setPreviousStatement(true, null);
+                this.setNextStatement(true, null);
+                this.setColour(260);
+                this.setTooltip("Adds an item to the end of the list.");
+            }
+        }
+    });
+
+    Blockly.common.defineBlocks({
+        'lists_get_index': {
+            init: function() {
+                this.appendValueInput("LIST")
+                    .setCheck("List")
+                    .appendField("in list");
+                this.appendValueInput("INDEX")
+                    .setCheck("Number")
+                    .appendField("get item at index");
+                this.setOutput(true, null);
+                this.setColour(260);
+                this.setTooltip("Gets an item (Index starts at 0).");
+            }
+        }
+    });
+    
+    Blockly.common.defineBlocks({
+        'lists_size': {
+            init: function() {
+                this.appendValueInput("LIST")
+                    .setCheck("List")
+                    .appendField("length of list");
+                this.setOutput(true, "Number");
+                this.setColour(260);
             }
         }
     });

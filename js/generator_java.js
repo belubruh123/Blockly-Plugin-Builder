@@ -384,6 +384,39 @@ export const initJavaGenerator = () => {
         return code;
     };
 
+    // --- LOOPS (For) ---
+    javaGenerator.forBlock['controls_for_simple'] = function(block) {
+        const variable = block.getFieldValue('VAR');
+        const from = javaGenerator.valueToCode(block, 'FROM', javaGenerator.ORDER_NONE) || '0';
+        const to = javaGenerator.valueToCode(block, 'TO', javaGenerator.ORDER_NONE) || '0';
+        const branch = javaGenerator.statementToCode(block, 'DO');
+        return `for (int ${variable} = (int)(${from}); ${variable} <= (int)(${to}); ${variable}++) {\n${branch}}\n`;
+    };
+
+    // --- LISTS ---
+    javaGenerator.forBlock['lists_create_new'] = function(block) {
+        // We use raw ArrayList for simplicity in this loose-typed env
+        return [`new java.util.ArrayList<>()`, javaGenerator.ORDER_ATOMIC];
+    };
+
+    javaGenerator.forBlock['lists_add'] = function(block) {
+        const list = javaGenerator.valueToCode(block, 'LIST', javaGenerator.ORDER_ATOMIC) || 'null';
+        const item = javaGenerator.valueToCode(block, 'ITEM', javaGenerator.ORDER_NONE) || 'null';
+        // Cast to List to be safe
+        return `        if (${list} instanceof java.util.List) ((java.util.List)${list}).add(${item});\n`;
+    };
+
+    javaGenerator.forBlock['lists_get_index'] = function(block) {
+        const list = javaGenerator.valueToCode(block, 'LIST', javaGenerator.ORDER_ATOMIC) || 'null';
+        const index = javaGenerator.valueToCode(block, 'INDEX', javaGenerator.ORDER_NONE) || '0';
+        return [`((java.util.List)${list}).get((int)(${index}))`, javaGenerator.ORDER_ATOMIC];
+    };
+
+    javaGenerator.forBlock['lists_size'] = function(block) {
+        const list = javaGenerator.valueToCode(block, 'LIST', javaGenerator.ORDER_ATOMIC) || 'null';
+        return [`((java.util.List)${list}).size()`, javaGenerator.ORDER_ATOMIC];
+    };
+
 
     // --- PAPER SPECIFIC ---
 

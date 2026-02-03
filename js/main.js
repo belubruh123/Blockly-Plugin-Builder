@@ -128,7 +128,21 @@ const generateToolbox = () => {
         "colour": "120",
         "contents": [
             { "kind": "block", "type": "controls_repeat_ext", "inputs": { "TIMES": { "shadow": { "type": "math_number", "fields": { "NUM": 10 } } } } },
-            { "kind": "block", "type": "controls_whileUntil" }
+            { "kind": "block", "type": "controls_whileUntil" },
+            { "kind": "block", "type": "controls_for_simple", "inputs": { "FROM": { "shadow": { "type": "math_number", "fields": { "NUM": 1 } } }, "TO": { "shadow": { "type": "math_number", "fields": { "NUM": 10 } } } } }
+        ]
+    });
+
+    // 6.5 Lists
+    contents.push({
+        "kind": "category",
+        "name": "Lists",
+        "colour": "260",
+        "contents": [
+            { "kind": "block", "type": "lists_create_new" },
+            { "kind": "block", "type": "lists_add" },
+            { "kind": "block", "type": "lists_get_index" },
+            { "kind": "block", "type": "lists_size" }
         ]
     });
 
