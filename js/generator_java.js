@@ -552,21 +552,25 @@ ${branch}
     javaGenerator.forBlock['ez_action_scoreboard_set'] = function(block) {
         let target = javaGenerator.valueToCode(block, 'TARGET', javaGenerator.ORDER_ATOMIC);
         const title = javaGenerator.valueToCode(block, 'TITLE', javaGenerator.ORDER_NONE) || '"Scoreboard"';
-        const line1 = javaGenerator.valueToCode(block, 'LINE1', javaGenerator.ORDER_NONE) || '"Line 1"';
-        const score1 = javaGenerator.valueToCode(block, 'SCORE1', javaGenerator.ORDER_NONE) || '1';
-        const line2 = javaGenerator.valueToCode(block, 'LINE2', javaGenerator.ORDER_NONE) || '"Line 2"';
-        const score2 = javaGenerator.valueToCode(block, 'SCORE2', javaGenerator.ORDER_NONE) || '0';
 
         if (!target) target = getSmartMe(block);
+        
+        // Generate Score Lines
+        let scoresCode = "";
+        let i = 1;
+        while (block.getInput('LINE' + i)) {
+            const line = javaGenerator.valueToCode(block, 'LINE' + i, javaGenerator.ORDER_NONE) || `"Line " + ${i}`;
+            const score = javaGenerator.valueToCode(block, 'SCORE' + i, javaGenerator.ORDER_NONE) || '0';
+            scoresCode += `            o.getScore(String.valueOf(${line})).setScore((int)${score});\n`;
+            i++;
+        }
 
         return `        if (${target} instanceof Player) {
             org.bukkit.scoreboard.ScoreboardManager m = Bukkit.getScoreboardManager();
             org.bukkit.scoreboard.Scoreboard b = m.getNewScoreboard();
             org.bukkit.scoreboard.Objective o = b.registerNewObjective("sb", org.bukkit.scoreboard.Criteria.DUMMY, Component.text(${title}));
             o.setDisplaySlot(org.bukkit.scoreboard.DisplaySlot.SIDEBAR);
-            o.getScore(String.valueOf(${line1})).setScore((int)${score1});
-            o.getScore(String.valueOf(${line2})).setScore((int)${score2});
-            ((Player)${target}).setScoreboard(b);
+${scoresCode}            ((Player)${target}).setScoreboard(b);
         }\n`;
     };
 

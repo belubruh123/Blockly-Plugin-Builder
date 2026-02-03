@@ -1,24 +1,109 @@
 // Block Definitions for Paper MC
 
-export const defineBlocks = () => {
+export const defineBlocks = (apiData) => {
     
+    // --- MUTATORS & EXTENSIONS ---    
+    // 1. Scoreboard Mutator (Dynamic Lines)
+    // Helper block for the mutator workspace
+    Blockly.common.defineBlocks({
+        'ez_scoreboard_mutator_line': {
+            init: function() {
+                this.appendDummyInput().appendField("Score Line");
+                this.setPreviousStatement(true);
+                this.setNextStatement(true);
+                this.setColour(160);
+                this.setTooltip("A line in the scoreboard.");
+                this.contextMenu = false;
+            }
+        },
+        'ez_scoreboard_mutator_container': {
+            init: function() {
+                this.appendDummyInput().appendField("Scoreboard Lines");
+                this.appendStatementInput("STACK");
+                this.setColour(160);
+                this.setTooltip("Add, remove, or reorder lines.");
+                this.contextMenu = false;
+            }
+        }
+    });
+
+    const SCOREBOARD_MUTATOR = {
+        mutationToDom: function() {
+            const container = Blockly.utils.xml.createElement('mutation');
+            container.setAttribute('lines', this.lineCount_);
+            return container;
+        },
+        domToMutation: function(xmlElement) {
+            this.lineCount_ = parseInt(xmlElement.getAttribute('lines'), 10) || 0;
+            this.updateShape_();
+        },
+        decompose: function(workspace) {
+            const containerBlock = workspace.newBlock('ez_scoreboard_mutator_container');
+            containerBlock.initSvg();
+            let connection = containerBlock.getInput('STACK').connection;
+            for (let i = 0; i < this.lineCount_; i++) {
+                const lineBlock = workspace.newBlock('ez_scoreboard_mutator_line');
+                lineBlock.initSvg();
+                connection.connect(lineBlock.previousConnection);
+                connection = lineBlock.nextConnection;
+            }
+            return containerBlock;
+        },
+        compose: function(containerBlock) {
+            let itemBlock = containerBlock.getInputTargetBlock('STACK');
+            // Count lines
+            const connections = [];
+            while (itemBlock) {
+                if (itemBlock.type === 'ez_scoreboard_mutator_line') {
+                    connections.push(itemBlock.valueConnection_);
+                }
+                itemBlock = itemBlock.nextConnection && itemBlock.nextConnection.targetBlock();
+            }
+            this.lineCount_ = connections.length;
+            this.updateShape_();
+        },
+        updateShape_: function() {
+            // Remove old inputs
+            let i = 1;
+            while (this.getInput('LINE' + i)) {
+                this.removeInput('LINE' + i);
+                this.removeInput('SCORE' + i);
+                i++;
+            }
+            
+            // Add new inputs
+            for (let i = 1; i <= this.lineCount_; i++) {
+                this.appendValueInput('LINE' + i)
+                    .setCheck(null)
+                    .appendField("Line " + i);
+                this.appendValueInput('SCORE' + i)
+                    .setCheck("Number")
+                    .appendField("Score");
+            }
+        }
+    };
+
+    if (!Blockly.Extensions.isRegistered('scoreboard_mutator')) {
+        Blockly.Extensions.registerMutator('scoreboard_mutator', SCOREBOARD_MUTATOR, undefined, ['ez_scoreboard_mutator_line']);
+    }
+
     // --- EVENTS (Master Block) ---
+    // Use API Data if available, else fallback
+    const eventOptions = apiData && apiData.events ? 
+        apiData.events.map(e => [`${e.id} (${e.category || 'Event'})`, e.id]) :
+        [
+            ["Player Joins Server", "PlayerJoinEvent"],
+            ["Player Leaves Server", "PlayerQuitEvent"],
+            ["Player Chats", "AsyncChatEvent"],
+            ["Player Breaks Block", "BlockBreakEvent"]
+        ];
+
     Blockly.common.defineBlocks({
         'ez_event_master': {
             init: function() {
                 this.appendDummyInput()
                     .appendField("When")
-                    .appendField(new Blockly.FieldDropdown([
-                        ["Player Joins Server", "PlayerJoinEvent"],
-                        ["Player Leaves Server", "PlayerQuitEvent"],
-                        ["Player Chats", "AsyncChatEvent"],
-                        ["Player Breaks Block", "BlockBreakEvent"],
-                        ["Player Places Block", "BlockPlaceEvent"],
-                        ["Player Dies", "PlayerDeathEvent"],
-                        ["Player Clicks / Interacts", "PlayerInteractEvent"],
-                        ["Entity / Mob Dies", "EntityDeathEvent"],
-                        ["Server Starts", "ServerLoad"]
-                    ]), "EVENT_TYPE");
+                    .appendField(new Blockly.FieldDropdown(eventOptions), "EVENT_TYPE");
                 this.appendStatementInput("DO")
                     .setCheck(null)
                     .appendField("do");
@@ -387,31 +472,36 @@ export const defineBlocks = () => {
         }
     });
     
+    // SCOREBOARD WITH MUTATOR
     Blockly.common.defineBlocks({
         'ez_action_scoreboard_set': {
             init: function() {
+                this.lineCount_ = 2; // Default lines
                 this.appendValueInput("TARGET")
                     .setCheck("Player")
                     .appendField("Set Scoreboard for");
                 this.appendValueInput("TITLE")
                     .setCheck(null)
                     .appendField("Title");
-                this.appendValueInput("LINE1")
-                    .setCheck(null)
-                    .appendField("Line 1");
-                this.appendValueInput("SCORE1")
-                    .setCheck("Number")
-                    .appendField("Score");
-                 this.appendValueInput("LINE2")
-                    .setCheck(null)
-                    .appendField("Line 2");
-                this.appendValueInput("SCORE2")
-                    .setCheck("Number")
-                    .appendField("Score");
+                
+                // Initial inputs
+                this.updateShape_();
+                
                 this.setPreviousStatement(true, null);
                 this.setNextStatement(true, null);
                 this.setColour(160);
-                this.setTooltip("Sets a simple 2-line sidebar scoreboard.");
+                this.setTooltip("Sets a sidebar scoreboard. Click the gear icon to add more lines!");
+                this.setMutator(new Blockly.Mutator(['ez_scoreboard_mutator_line']));
+            },
+            updateShape_: function() {
+                // Remove old inputs if any (handled by mutator mixin in practice, but good for init)
+                // Actually, the Mixin overwrites updateShape_, so this local one is for Init.
+                for (let i = 1; i <= this.lineCount_; i++) {
+                    if (!this.getInput('LINE' + i)) {
+                        this.appendValueInput('LINE' + i).setCheck(null).appendField("Line " + i);
+                        this.appendValueInput('SCORE' + i).setCheck("Number").appendField("Score");
+                    }
+                }
             }
         }
     });

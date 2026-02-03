@@ -3,49 +3,63 @@
 /* Force Blockly background to match container */
 .blocklySvg {
     background-color: #111827 !important; /* gray-900 */
+    border: none;
 }
 
 /* Toolbox */
 .blocklyToolboxDiv {
-    background-color: #0b0f19 !important; /* gray-950 */
+    background-color: #0f1523 !important; /* darker gray */
     border-right: 1px solid #1f2937;
     color: #e5e7eb;
 }
 
+/* Categories */
+.blocklyTreeLabel {
+    color: #9ca3af !important;
+    font-family: 'Segoe UI', system-ui, sans-serif !important;
+    font-weight: 500;
+    font-size: 13px;
+}
+
+.blocklyTreeRow:hover {
+    background-color: #1f2937 !important;
+}
+
+.blocklyTreeRow.blocklyTreeSelected {
+    background-color: #374151 !important;
+    border-left: 3px solid #10b981 !important; /* Green accent */
+}
+
 .blocklyFlyoutBackground {
     fill: #111827 !important;
-    fill-opacity: 0.9 !important;
+    fill-opacity: 0.95 !important;
 }
 
 /* Text Colors in blocks */
 .blocklyText {
     fill: #fff !important;
     font-family: 'Segoe UI', system-ui, sans-serif !important;
-    font-weight: 500;
+    font-weight: 600;
+    font-size: 10pt;
 }
 
 /* Scrollbars */
 .blocklyScrollbarHandle {
-    fill: #374151 !important;
+    fill: #4b5563 !important;
+    opacity: 0.5;
 }
 
 .blocklyScrollbarHandle:hover {
-    fill: #4b5563 !important;
-}
-
-/* Hide scrollbars completely as requested */
-.blocklyToolboxDiv::-webkit-scrollbar {
-    display: none;
-}
-.blocklyFlyoutScrollbar {
-    display: none !important;
+    fill: #6b7280 !important;
+    opacity: 0.8;
 }
 
 /* Dropdowns */
 .blocklyWidgetDiv .goog-menu {
     background: #1f2937 !important;
-    border-color: #374151 !important;
+    border: 1px solid #374151 !important;
     color: white !important;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
 }
 
 .blocklyWidgetDiv .goog-menuitem-content {
@@ -54,16 +68,19 @@
 
 .blocklyWidgetDiv .goog-menuitem-highlight,
 .blocklyWidgetDiv .goog-menuitem-hover {
-    background-color: #374151 !important;
-    border-color: #374151 !important;
+    background-color: #10b981 !important; /* Green hover */
+    color: white !important;
+    border-color: #10b981 !important;
 }
 
 /* Field Inputs */
 .blocklyHtmlInput {
     background-color: #374151 !important;
     color: white !important;
+    border: 1px solid #4b5563 !important;
     border-radius: 4px;
     font-family: monospace !important;
+    padding: 2px 4px;
 }
 
 /* Scrollbar hiding for the tab container */
@@ -73,4 +90,13 @@
 .no-scrollbar {
     -ms-overflow-style: none;
     scrollbar-width: none;
+}
+
+/* Category Icons (Optional) */
+/* You can add icons via :before on .blocklyTreeLabel if you want */
+
+/* Code Preview Syntax Highlighting (Basic) */
+#code-output {
+    line-height: 1.6;
+    color: #d1d5db; /* gray-300 */
 }

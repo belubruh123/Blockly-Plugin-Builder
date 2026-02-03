@@ -5,7 +5,7 @@ import { loadDynamicBlocks } from './block_loader.js';
 import { API_DATA } from './api_data.js';
 
 // Initialize Blocks (Legacy + Dynamic)
-defineBlocks();
+defineBlocks(API_DATA);
 const javaGenerator = initJavaGenerator();
 loadDynamicBlocks(Blockly, javaGenerator);
 
@@ -24,56 +24,72 @@ const debounce = (func, wait) => {
 
 const capitalize = (s) => s.charAt(0).toUpperCase() + s.slice(1);
 
-// --- DYNAMIC TOOLBOX GENERATION (Flat / Scrollable) ---
+// --- DYNAMIC TOOLBOX GENERATION (Categorized) ---
 const generateToolbox = () => {
     // Safety check
-    if (!API_DATA) return { "kind": "flyoutToolbox", "contents": [] };
+    if (!API_DATA) return { "kind": "categoryToolbox", "contents": [] };
     const { enums, events, methods, context_getters } = API_DATA;
     const showApi = document.getElementById('toggle-api').checked;
 
     const contents = [];
     
-    // Helper to add label
-    const addLabel = (text) => contents.push({ "kind": "label", "text": text, "web-class": "toolbox-label" });
-    const addSep = () => contents.push({ "kind": "sep", "gap": "20" });
+    // Helper to add category
+    const addCategory = (name, color, customContents = []) => {
+        contents.push({
+            "kind": "category",
+            "name": name,
+            "colour": color,
+            "contents": customContents
+        });
+    };
 
     // 1. EVENTS
-    addLabel("EVENTS");
-    contents.push({ "kind": "block", "type": "ez_event_master" });
-    addSep();
+    const eventsCat = [];
+    eventsCat.push({ "kind": "block", "type": "ez_event_master" });
+    eventsCat.push({ "kind": "label", "text": "Event Data", "web-class": "toolbox-label" });
+    // Add specific getters for events
+    context_getters.filter(c => c.contexts.some(ctx => ctx.includes("Event"))).forEach(ctx => {
+        const blockType = `paper_ctx_${ctx.name.toLowerCase().replace(/[^a-z0-9]/g, '_')}`;
+        eventsCat.push({ "kind": "block", "type": blockType });
+    });
+    // Add old helpers
+    eventsCat.push({ "kind": "block", "type": "ez_val_victim" });
+    eventsCat.push({ "kind": "block", "type": "ez_val_attacker" });
+    
+    addCategory("Events", "230", eventsCat);
 
     // 2. ACTIONS
-    addLabel("ACTIONS");
-    contents.push({
+    const actionsCat = [];
+    actionsCat.push({
         "kind": "block", "type": "ez_action_message",
         "inputs": { "MSG": { "shadow": { "type": "text_string", "fields": { "TEXT": "Hello!" } } } }
     });
-    contents.push({
+    actionsCat.push({
         "kind": "block", "type": "ez_action_broadcast",
         "inputs": { "MSG": { "shadow": { "type": "text_string", "fields": { "TEXT": "Alert!" } } } }
     });
-    contents.push({
+    actionsCat.push({
         "kind": "block", "type": "ez_action_title",
         "inputs": {
             "TITLE": { "shadow": { "type": "text_string", "fields": { "TEXT": "Welcome" } } },
             "SUBTITLE": { "shadow": { "type": "text_string", "fields": { "TEXT": "Enjoy the server" } } }
         }
     });
-    contents.push({
+    actionsCat.push({
         "kind": "block", "type": "ez_action_set_tablist",
         "inputs": {
             "HEADER": { "shadow": { "type": "text_string", "fields": { "TEXT": "Welcome!" } } },
             "FOOTER": { "shadow": { "type": "text_string", "fields": { "TEXT": "play.myserver.com" } } }
         }
     });
-    contents.push({
+    actionsCat.push({
         "kind": "block", "type": "ez_action_bossbar_show_timed",
         "inputs": {
             "TITLE": { "shadow": { "type": "text_string", "fields": { "TEXT": "Boss Info" } } },
             "SECONDS": { "shadow": { "type": "math_number", "fields": { "NUM": 10 } } }
         }
     });
-    contents.push({
+    actionsCat.push({
         "kind": "block", "type": "ez_action_scoreboard_set",
         "inputs": {
             "TITLE": { "shadow": { "type": "text_string", "fields": { "TEXT": "Stats" } } },
@@ -84,81 +100,89 @@ const generateToolbox = () => {
         }
     });
 
-    contents.push({ "kind": "block", "type": "ez_action_sound" });
-    contents.push({ "kind": "block", "type": "ez_action_particle" });
-    contents.push({
+    actionsCat.push({ "kind": "block", "type": "ez_action_sound" });
+    actionsCat.push({ "kind": "block", "type": "ez_action_particle" });
+    actionsCat.push({
         "kind": "block", "type": "ez_action_log",
         "inputs": { "MSG": { "shadow": { "type": "text_string", "fields": { "TEXT": "Debug info" } } } }
     });
-    contents.push({ "kind": "block", "type": "ez_action_console_command" });
+    actionsCat.push({ "kind": "block", "type": "ez_action_console_command" });
+    
+    addCategory("Actions", "160", actionsCat);
     
     // Commands
-    addLabel("COMMANDS");
-    contents.push({ "kind": "block", "type": "paper_command" });
-    contents.push({ "kind": "block", "type": "paper_command_arg_get" });
-    addSep();
+    const cmdCat = [];
+    cmdCat.push({ "kind": "block", "type": "paper_command" });
+    cmdCat.push({ "kind": "block", "type": "paper_command_arg_get" });
+    cmdCat.push({ "kind": "block", "type": "paper_command_args_length" });
+    // Add command context getters
+    context_getters.filter(c => c.contexts.some(ctx => ctx.includes("Command"))).forEach(ctx => {
+        const blockType = `paper_ctx_${ctx.name.toLowerCase().replace(/[^a-z0-9]/g, '_')}`;
+        cmdCat.push({ "kind": "block", "type": blockType });
+    });
+
+    addCategory("Commands", "120", cmdCat);
 
     // 3. PLAYER
-    addLabel("PLAYER");
-    contents.push({ "kind": "block", "type": "ez_val_me" });
-    contents.push({ "kind": "block", "type": "ez_val_player_ping" });
-    contents.push({ "kind": "block", "type": "ez_val_victim" });
-    contents.push({ "kind": "block", "type": "ez_val_attacker" });
-    contents.push({
+    const playerCat = [];
+    playerCat.push({ "kind": "block", "type": "ez_val_me" });
+    playerCat.push({ "kind": "block", "type": "ez_val_player_ping" });
+    playerCat.push({
         "kind": "block", "type": "ez_action_give",
         "inputs": { "AMOUNT": { "shadow": { "type": "math_number", "fields": { "NUM": 1 } } } }
     });
-    contents.push({ "kind": "block", "type": "ez_action_inventory_clear" });
-    contents.push({ "kind": "block", "type": "ez_action_inventory_has" });
+    playerCat.push({ "kind": "block", "type": "ez_action_inventory_clear" });
+    playerCat.push({ "kind": "block", "type": "ez_action_inventory_has" });
     
-    contents.push({
+    playerCat.push({
         "kind": "block", "type": "ez_action_set_health",
         "inputs": { "HEALTH": { "shadow": { "type": "math_number", "fields": { "NUM": 20 } } } }
     });
-    contents.push({ "kind": "block", "type": "ez_action_toggle_flight" });
-    contents.push({ "kind": "block", "type": "ez_action_set_gamemode" });
-    contents.push({ "kind": "block", "type": "ez_action_launch_projectile" });
+    playerCat.push({ "kind": "block", "type": "ez_action_toggle_flight" });
+    playerCat.push({ "kind": "block", "type": "ez_action_set_gamemode" });
+    playerCat.push({ "kind": "block", "type": "ez_action_launch_projectile" });
 
     // Effects
-    contents.push({
+    playerCat.push({
         "kind": "block", "type": "ez_action_effect_add",
         "inputs": {
             "DURATION": { "shadow": { "type": "math_number", "fields": { "NUM": 10 } } },
             "AMPLIFIER": { "shadow": { "type": "math_number", "fields": { "NUM": 1 } } }
         }
     });
-    contents.push({ "kind": "block", "type": "ez_action_effect_clear" });
+    playerCat.push({ "kind": "block", "type": "ez_action_effect_clear" });
 
     // Attributes
-    contents.push({
+    playerCat.push({
         "kind": "block", "type": "paper_action_set_attribute",
         "inputs": { "VALUE": { "shadow": { "type": "math_number", "fields": { "NUM": 0 } } } }
     });
-    contents.push({
+    playerCat.push({
         "kind": "block", "type": "ez_action_attribute_change",
         "inputs": { "AMOUNT": { "shadow": { "type": "math_number", "fields": { "NUM": 1 } } } }
     });
-    contents.push({ "kind": "block", "type": "ez_expr_attribute_get" });
+    playerCat.push({ "kind": "block", "type": "ez_expr_attribute_get" });
 
     // Admin
-    contents.push({ "kind": "block", "type": "ez_action_ban" });
-    contents.push({ "kind": "block", "type": "ez_action_kick" });
-    addSep();
+    playerCat.push({ "kind": "block", "type": "ez_action_ban" });
+    playerCat.push({ "kind": "block", "type": "ez_action_kick" });
+    
+    addCategory("Player", "290", playerCat);
 
     // 4. WORLD
-    addLabel("WORLD");
-    contents.push({ "kind": "block", "type": "ez_action_teleport" });
-    contents.push({ "kind": "block", "type": "ez_action_replace_block" });
-    contents.push({ "kind": "block", "type": "ez_action_spawn_lightning" });
-    contents.push({
+    const worldCat = [];
+    worldCat.push({ "kind": "block", "type": "ez_action_teleport" });
+    worldCat.push({ "kind": "block", "type": "ez_action_replace_block" });
+    worldCat.push({ "kind": "block", "type": "ez_action_spawn_lightning" });
+    worldCat.push({
         "kind": "block", "type": "ez_action_explosion",
         "inputs": { "POWER": { "shadow": { "type": "math_number", "fields": { "NUM": 4 } } } }
     });
-    contents.push({ "kind": "block", "type": "ez_action_set_time" });
-    contents.push({ "kind": "block", "type": "ez_action_set_weather" });
+    worldCat.push({ "kind": "block", "type": "ez_action_set_time" });
+    worldCat.push({ "kind": "block", "type": "ez_action_set_weather" });
     
-    contents.push({ "kind": "block", "type": "ez_val_location_of" });
-    contents.push({
+    worldCat.push({ "kind": "block", "type": "ez_val_location_of" });
+    worldCat.push({
         "kind": "block", "type": "ez_val_coords",
         "inputs": {
             "X": { "shadow": { "type": "math_number", "fields": { "NUM": 0 } } },
@@ -166,68 +190,85 @@ const generateToolbox = () => {
             "Z": { "shadow": { "type": "math_number", "fields": { "NUM": 0 } } }
         }
     });
-    addSep();
+    addCategory("World", "30", worldCat);
 
     // 5. CONTROL
-    addLabel("CONTROL");
-    contents.push({
+    const controlCat = [];
+    controlCat.push({
         "kind": "block", "type": "ez_control_wait",
         "inputs": { "SECONDS": { "shadow": { "type": "math_number", "fields": { "NUM": 1 } } } }
     });
-    contents.push({ "kind": "block", "type": "controls_if" });
-    contents.push({ "kind": "block", "type": "controls_repeat_ext", "inputs": { "TIMES": { "shadow": { "type": "math_number", "fields": { "NUM": 10 } } } } });
-    contents.push({ "kind": "block", "type": "controls_whileUntil" });
-    contents.push({ "kind": "block", "type": "controls_for_simple", "inputs": { "FROM": { "shadow": { "type": "math_number", "fields": { "NUM": 1 } } }, "TO": { "shadow": { "type": "math_number", "fields": { "NUM": 10 } } } } });
-    addSep();
+    controlCat.push({ "kind": "block", "type": "controls_if" });
+    controlCat.push({ "kind": "block", "type": "controls_repeat_ext", "inputs": { "TIMES": { "shadow": { "type": "math_number", "fields": { "NUM": 10 } } } } });
+    controlCat.push({ "kind": "block", "type": "controls_whileUntil" });
+    controlCat.push({ "kind": "block", "type": "controls_for_simple", "inputs": { "FROM": { "shadow": { "type": "math_number", "fields": { "NUM": 1 } } }, "TO": { "shadow": { "type": "math_number", "fields": { "NUM": 10 } } } } });
+    controlCat.push({ "kind": "block", "type": "java_if" });
+    
+    addCategory("Control", "210", controlCat);
 
     // 6. DATA (Variables)
-    addLabel("VARIABLES");
-    contents.push({ "kind": "block", "type": "var_declare_typed" });
-    contents.push({ "kind": "block", "type": "var_set_typed" });
-    contents.push({ "kind": "block", "type": "var_get_typed" });
-    contents.push({ "kind": "block", "type": "ez_data_set_global" });
-    contents.push({ "kind": "block", "type": "ez_data_get_global" });
-    contents.push({ "kind": "block", "type": "ez_val_server_tps" });
+    const dataCat = [];
+    dataCat.push({ "kind": "block", "type": "var_declare_typed" });
+    dataCat.push({ "kind": "block", "type": "var_set_typed" });
+    dataCat.push({ "kind": "block", "type": "var_get_typed" });
+    dataCat.push({ "kind": "block", "type": "ez_data_set_global" });
+    dataCat.push({ "kind": "block", "type": "ez_data_get_global" });
+    dataCat.push({ "kind": "block", "type": "ez_val_server_tps" });
+    dataCat.push({ "kind": "block", "type": "logic_is_type" });
     
-    contents.push({ "kind": "block", "type": "lists_create_new" });
-    contents.push({ "kind": "block", "type": "lists_add" });
-    contents.push({ "kind": "block", "type": "lists_get_index" });
-    contents.push({ "kind": "block", "type": "lists_size" });
+    dataCat.push({ "kind": "block", "type": "lists_create_new" });
+    dataCat.push({ "kind": "block", "type": "lists_add" });
+    dataCat.push({ "kind": "block", "type": "lists_get_index" });
+    dataCat.push({ "kind": "block", "type": "lists_size" });
+
+    addCategory("Data", "330", dataCat);
 
     // 7. MATH
-    addLabel("MATH");
-    contents.push({ "kind": "block", "type": "math_number" });
-    contents.push({ "kind": "block", "type": "math_arithmetic" });
-    contents.push({ "kind": "block", "type": "logic_compare" });
-    contents.push({ "kind": "block", "type": "logic_operation" });
-    contents.push({ "kind": "block", "type": "logic_boolean" });
-    contents.push({ "kind": "block", "type": "ez_convert_to_number" });
+    const mathCat = [];
+    mathCat.push({ "kind": "block", "type": "math_number" });
+    mathCat.push({ "kind": "block", "type": "math_arithmetic" });
+    mathCat.push({ "kind": "block", "type": "logic_compare" });
+    mathCat.push({ "kind": "block", "type": "logic_operation" });
+    mathCat.push({ "kind": "block", "type": "logic_boolean" });
+    mathCat.push({ "kind": "block", "type": "java_math_op" });
+    mathCat.push({ "kind": "block", "type": "java_logic_compare" });
+    mathCat.push({ "kind": "block", "type": "ez_convert_to_number" });
+
+    addCategory("Math", "230", mathCat);
 
     // 8. TEXT
-    addLabel("TEXT");
-    contents.push({ "kind": "block", "type": "text_string" });
-    contents.push({ "kind": "block", "type": "ez_convert_to_string" });
-    addSep();
+    const textCat = [];
+    textCat.push({ "kind": "block", "type": "text_string" });
+    textCat.push({ "kind": "block", "type": "ez_convert_to_string" });
+    addCategory("Text", "160", textCat);
 
     // 9. FILES
-    addLabel("FILES");
-    contents.push({ "kind": "block", "type": "ez_config_set" });
-    contents.push({ "kind": "block", "type": "ez_config_get" });
-    addSep();
+    const filesCat = [];
+    filesCat.push({ "kind": "block", "type": "ez_config_set" });
+    filesCat.push({ "kind": "block", "type": "ez_config_get" });
+    addCategory("Files", "290", filesCat);
     
     // 10. ADMIN
-    addLabel("ADMIN");
-    contents.push({
+    const adminCat = [];
+    adminCat.push({
         "kind": "block", "type": "ez_action_kick_all",
         "inputs": { "REASON": { "shadow": { "type": "text_string", "fields": { "TEXT": "Maintenance" } } } }
     });
-    contents.push({ "kind": "block", "type": "ez_action_stop_server" });
-    addSep();
+    adminCat.push({ "kind": "block", "type": "ez_action_stop_server" });
+    addCategory("Admin", "0", adminCat);
 
     // --- API CATEGORIES (Hidden by default) ---
     if (showApi) {
-        addLabel("ADVANCED API");
+        const apiCat = [];
+        
+        // Enums
+        const enumCat = [];
+        Object.keys(enums).forEach(e => {
+            enumCat.push({ "kind": "block", "type": `paper_enum_${e.toLowerCase()}` });
+        });
+        addCategory("API: Enums", "60", enumCat);
 
+        // Methods by Target
         const methodsByTarget = {};
         methods.forEach(m => {
             let target = m.target || "Utils";
@@ -246,13 +287,11 @@ const generateToolbox = () => {
             if (target === "Event Control") color = "230";
             else if (API_DATA.types[target]) color = API_DATA.types[target].color;
             
-            // Add label for API category
-            addLabel(target.toUpperCase());
-            methodsByTarget[target].forEach(b => contents.push(b));
+            addCategory(`API: ${target}`, color, methodsByTarget[target]);
         });
     }
 
-    return { "kind": "flyoutToolbox", "contents": contents };
+    return { "kind": "categoryToolbox", "contents": contents };
 };
 
 // Toggle Listener
@@ -260,32 +299,47 @@ document.getElementById('toggle-api').addEventListener('change', () => {
     workspace.updateToolbox(generateToolbox());
 });
 
-// --- SEARCH LOGIC (Updated for Flyout) ---
+// --- SEARCH LOGIC (Updated for Category Toolbox) ---
 const handleSearch = (e) => {
     const term = e.target.value.toLowerCase();
-    const fullToolbox = generateToolbox();
+    
+    // For category toolbox, we can't easily filter "in place" without rebuilding structure.
+    // If search term exists, switch to a Flyout (Flat) of matches?
+    // Or filter items within categories.
     
     if (!term) {
-        workspace.updateToolbox(fullToolbox);
+        workspace.updateToolbox(generateToolbox());
         return;
     }
 
-    // Filter Logic for Flyout
-    const filteredContents = fullToolbox.contents.filter(item => {
-        // Keep Labels? Maybe only if next item is match, but simpler to just filter blocks
-        if (item.kind === "block") {
-            // Match type or text? We only have type here reliably.
-            let match = item.type.toLowerCase().includes(term);
-            if (!match && item.type.startsWith('paper_method_')) {
-                 const apiName = item.type.replace('paper_method_', '').replace(/_/g, ' ');
-                 if (apiName.includes(term)) match = true;
-            }
-            return match;
-        }
-        return false; 
-    });
+    const fullToolbox = generateToolbox();
+    const flatContents = [];
 
-    workspace.updateToolbox({ "kind": "flyoutToolbox", "contents": filteredContents });
+    // Helper to extract blocks recursively
+    const extractBlocks = (itemList) => {
+        itemList.forEach(item => {
+            if (item.kind === "block") {
+                let match = item.type.toLowerCase().includes(term);
+                if (!match && item.type.startsWith('paper_method_')) {
+                     const apiName = item.type.replace('paper_method_', '').replace(/_/g, ' ');
+                     if (apiName.includes(term)) match = true;
+                }
+                if (match) flatContents.push(item);
+            } else if (item.kind === "category") {
+                extractBlocks(item.contents);
+            }
+        });
+    };
+    
+    extractBlocks(fullToolbox.contents);
+    
+    // Show flat results
+    if (flatContents.length > 0) {
+        workspace.updateToolbox({ "kind": "flyoutToolbox", "contents": flatContents });
+    } else {
+        // Show empty
+        workspace.updateToolbox({ "kind": "flyoutToolbox", "contents": [] });
+    }
 };
 
 document.getElementById('block-search').addEventListener('input', debounce(handleSearch, 300));
@@ -314,37 +368,38 @@ let currentPackagePath = "com/example/plugin"; // Default
 // --- GENERATION ORCHESTRATOR ---
 
 const generateCode = () => {
-    generatedFiles = {};
-    
-    // Get Project Settings
-    const projectNameRaw = document.getElementById('project-name').value || "MyPlugin";
-    const authorRaw = document.getElementById('project-author').value || "Author";
-    const version = document.getElementById('project-version').value || "1.0";
+    try {
+        generatedFiles = {};
+        
+        // Get Project Settings
+        const projectNameRaw = document.getElementById('project-name').value || "MyPlugin";
+        const authorRaw = document.getElementById('project-author').value || "Author";
+        const version = document.getElementById('project-version').value || "1.0";
 
-    // Sanitize Package Name
-    const cleanStr = (s) => s.toLowerCase().replace(/[^a-z0-9]/g, '');
-    const packageName = `dev.${cleanStr(authorRaw)}.${cleanStr(projectNameRaw)}`;
-    currentPackagePath = packageName.replace(/\./g, '/');
+        // Sanitize Package Name
+        const cleanStr = (s) => s.toLowerCase().replace(/[^a-z0-9]/g, '');
+        const packageName = `dev.${cleanStr(authorRaw)}.${cleanStr(projectNameRaw)}`;
+        currentPackagePath = packageName.replace(/\./g, '/');
 
-    const topBlocks = workspace.getTopBlocks(false);
-    
-    // Containers
-    let eventsCode = "";
-    let commands = []; // List of { name, code }
+        const topBlocks = workspace.getTopBlocks(false);
+        
+        // Containers
+        let eventsCode = "";
+        let commands = []; // List of { name, code }
 
-    // 1. Walk top blocks
-    topBlocks.forEach(block => {
-        if (block.type.startsWith('paper_event_') || block.type === 'ez_event_master') { 
-            eventsCode += javaGenerator.blockToCode(block);
-        } else if (block.type === 'paper_command') {
-            const cmdName = block.getFieldValue('CMD_NAME');
-            const logic = javaGenerator.blockToCode(block);
-            commands.push({ name: cmdName, code: logic });
-        }
-    });
+        // 1. Walk top blocks
+        topBlocks.forEach(block => {
+            if (block.type.startsWith('paper_event_') || block.type === 'ez_event_master') { 
+                eventsCode += javaGenerator.blockToCode(block);
+            } else if (block.type === 'paper_command') {
+                const cmdName = block.getFieldValue('CMD_NAME');
+                const logic = javaGenerator.blockToCode(block);
+                commands.push({ name: cmdName, code: logic });
+            }
+        });
 
-    // 2. Build Main.java
-    const mainJava = `package ${packageName};
+        // 2. Build Main.java
+        const mainJava = `package ${packageName};
 
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.event.Listener;
@@ -393,12 +448,12 @@ ${commands.map(c => `        if (getCommand("${c.name}") != null) getCommand("${
     ${eventsCode}
 }
 `;
-    generatedFiles['Main.java'] = mainJava;
+        generatedFiles['Main.java'] = mainJava;
 
-    // 3. Build Command Files
-    commands.forEach(cmd => {
-        const className = capitalize(cmd.name) + "Command";
-        const fileContent = `package ${packageName};
+        // 3. Build Command Files
+        commands.forEach(cmd => {
+            const className = capitalize(cmd.name) + "Command";
+            const fileContent = `package ${packageName};
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -432,20 +487,25 @@ ${cmd.code}
     }
 }
 `;
-        generatedFiles[className + '.java'] = fileContent;
-    });
+            generatedFiles[className + '.java'] = fileContent;
+        });
 
-    // 4. Build plugin.yml
-    const cmdNames = commands.map(c => c.name);
-    generatedFiles['plugin.yml'] = generatePluginYmlLocal(projectNameRaw, version, cmdNames, authorRaw, packageName);
+        // 4. Build plugin.yml
+        const cmdNames = commands.map(c => c.name);
+        generatedFiles['plugin.yml'] = generatePluginYmlLocal(projectNameRaw, version, cmdNames, authorRaw, packageName);
 
-    // 5. Build pom.xml (Maven)
-    generatedFiles['pom.xml'] = generatePomXml(packageName, projectNameRaw, version);
+        // 5. Build pom.xml (Maven)
+        generatedFiles['pom.xml'] = generatePomXml(packageName, projectNameRaw, version);
 
-    // Update UI
-    updateTabs();
-    showFile(currentFile);
-    saveState(); // Auto-save on generate
+        // Update UI
+        updateTabs();
+        showFile(currentFile);
+        saveState(); // Auto-save on generate
+
+    } catch (e) {
+        console.error("Generation Error:", e);
+        document.getElementById('code-output').value = "// Error generating code:\n// " + e.message + "\n// Check console for details.";
+    }
 };
 
 // Generate Basic POM
