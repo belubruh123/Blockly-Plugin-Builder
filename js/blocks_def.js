@@ -396,6 +396,42 @@ export const defineBlocks = () => {
         }
     });
 
+    Blockly.common.defineBlocks({
+        'ez_action_attribute_change': {
+            init: function() {
+                this.appendValueInput("TARGET")
+                    .setCheck(["Player", "LivingEntity", "Entity"])
+                    .appendField("Change Attribute");
+                this.appendDummyInput()
+                    .appendField(new Blockly.FieldDropdown(ATTRIBUTES), "ATTRIBUTE");
+                this.appendValueInput("AMOUNT")
+                    .setCheck("Number")
+                    .appendField("by");
+                this.setPreviousStatement(true, null);
+                this.setNextStatement(true, null);
+                this.setColour(160);
+                this.setTooltip("Increases or decreases an attribute value (e.g., add 2 to Max Health).");
+            }
+        }
+    });
+
+    Blockly.common.defineBlocks({
+        'ez_expr_attribute_get': {
+            init: function() {
+                this.appendValueInput("TARGET")
+                    .setCheck(["Player", "LivingEntity", "Entity"])
+                    .appendField("Get Value of");
+                this.appendDummyInput()
+                    .appendField(new Blockly.FieldDropdown(ATTRIBUTES), "ATTRIBUTE");
+                this.appendDummyInput()
+                    .appendField("from");
+                this.setOutput(true, "Number");
+                this.setColour(290);
+                this.setTooltip("Gets the current effective value of an attribute.");
+            }
+        }
+    });
+
     // --- EASY MODE: FUN & WORLD ---
 
     // 7. REPLACE BLOCK

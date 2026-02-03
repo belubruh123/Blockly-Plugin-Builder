@@ -506,6 +506,35 @@ ${statements}
         }\n`;
     };
 
+    javaGenerator.forBlock['ez_action_attribute_change'] = function(block) {
+        let target = javaGenerator.valueToCode(block, 'TARGET', javaGenerator.ORDER_ATOMIC);
+        const attr = block.getFieldValue('ATTRIBUTE');
+        const amount = javaGenerator.valueToCode(block, 'AMOUNT', javaGenerator.ORDER_NONE) || '0';
+        
+        if (!target) target = getSmartMe(block);
+
+        // We need to safely get the attribute, check if not null, then add to base value
+        return `        if (${target} instanceof LivingEntity) {
+            org.bukkit.attribute.AttributeInstance attr = ((LivingEntity) ${target}).getAttribute(Attribute.${attr});
+            if (attr != null) {
+                attr.setBaseValue(attr.getBaseValue() + ${amount});
+            }
+        }\n`;
+    };
+
+    javaGenerator.forBlock['ez_expr_attribute_get'] = function(block) {
+        let target = javaGenerator.valueToCode(block, 'TARGET', javaGenerator.ORDER_ATOMIC);
+        const attr = block.getFieldValue('ATTRIBUTE');
+        
+        if (!target) target = getSmartMe(block);
+
+        // Return 0 if entity is invalid or attribute is null (Safety first)
+        // Ternary hell: (target is LivingEntity) ? ( (attr != null) ? attr.getValue() : 0 ) : 0
+        
+        const code = `(${target} instanceof LivingEntity && ((LivingEntity)${target}).getAttribute(Attribute.${attr}) != null ? ((LivingEntity)${target}).getAttribute(Attribute.${attr}).getValue() : 0)`;
+        return [code, javaGenerator.ORDER_ATOMIC];
+    };
+
     // --- DATA ---
     javaGenerator.forBlock['text_string'] = function(block) {
         const text = block.getFieldValue('TEXT');

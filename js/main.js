@@ -76,7 +76,9 @@ const generateToolbox = () => {
         "contents": [
              { "kind": "block", "type": "ez_action_set_health" },
              { "kind": "block", "type": "ez_action_toggle_flight" },
-             { "kind": "block", "type": "paper_action_set_attribute" }
+             { "kind": "block", "type": "paper_action_set_attribute" },
+             { "kind": "block", "type": "ez_action_attribute_change" },
+             { "kind": "block", "type": "ez_expr_attribute_get" }
         ]
     });
 
