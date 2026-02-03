@@ -489,6 +489,87 @@ ${branch}
         return `        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), ${cmd});\n`;
     };
 
+    javaGenerator.forBlock['ez_action_kick_all'] = function(block) {
+        const reason = javaGenerator.valueToCode(block, 'REASON', javaGenerator.ORDER_NONE) || '"Server Closing"';
+        return `        for (Player p : Bukkit.getOnlinePlayers()) {
+            p.kick(Component.text(${reason}));
+        }\n`;
+    };
+
+    javaGenerator.forBlock['ez_action_stop_server'] = function(block) {
+        return `        Bukkit.shutdown();\n`;
+    };
+
+    // --- INFO ---
+    javaGenerator.forBlock['ez_val_player_ping'] = function(block) {
+        let target = javaGenerator.valueToCode(block, 'TARGET', javaGenerator.ORDER_ATOMIC);
+        if (!target) target = getSmartMe(block);
+        
+        return [`(${target} instanceof Player ? ((Player)${target}).getPing() : 0)`, javaGenerator.ORDER_ATOMIC];
+    };
+
+    javaGenerator.forBlock['ez_val_server_tps'] = function(block) {
+        // [0] is 1m, [1] is 5m, [2] is 15m
+        return [`Bukkit.getServer().getTPS()[0]`, javaGenerator.ORDER_ATOMIC];
+    };
+
+    // --- VISUALS ---
+    javaGenerator.forBlock['ez_action_set_tablist'] = function(block) {
+        let target = javaGenerator.valueToCode(block, 'TARGET', javaGenerator.ORDER_ATOMIC);
+        const h = javaGenerator.valueToCode(block, 'HEADER', javaGenerator.ORDER_NONE) || '""';
+        const f = javaGenerator.valueToCode(block, 'FOOTER', javaGenerator.ORDER_NONE) || '""';
+        
+        if (!target) target = getSmartMe(block);
+        
+        return `        if (${target} instanceof Player) {
+            ((Player)${target}).sendPlayerListHeaderAndFooter(Component.text(${h}), Component.text(${f}));
+        }\n`;
+    };
+
+    javaGenerator.forBlock['ez_action_bossbar_show_timed'] = function(block) {
+        let target = javaGenerator.valueToCode(block, 'TARGET', javaGenerator.ORDER_ATOMIC);
+        const title = javaGenerator.valueToCode(block, 'TITLE', javaGenerator.ORDER_NONE) || '"BossBar"';
+        const color = block.getFieldValue('COLOR');
+        const style = block.getFieldValue('STYLE');
+        const seconds = javaGenerator.valueToCode(block, 'SECONDS', javaGenerator.ORDER_NONE) || '5';
+
+        if (!target) target = getSmartMe(block);
+
+        return `        if (${target} instanceof Player) {
+            org.bukkit.boss.BossBar bar = Bukkit.createBossBar(${title}, org.bukkit.boss.BarColor.${color}, org.bukkit.boss.BarStyle.${style});
+            bar.addPlayer((Player)${target});
+            bar.setVisible(true);
+            new org.bukkit.scheduler.BukkitRunnable() {
+                @Override
+                public void run() {
+                    bar.removeAll();
+                    bar.setVisible(false);
+                }
+            }.runTaskLater(Main.getPlugin(Main.class), (long)(${seconds} * 20));
+        }\n`;
+    };
+
+    javaGenerator.forBlock['ez_action_scoreboard_set'] = function(block) {
+        let target = javaGenerator.valueToCode(block, 'TARGET', javaGenerator.ORDER_ATOMIC);
+        const title = javaGenerator.valueToCode(block, 'TITLE', javaGenerator.ORDER_NONE) || '"Scoreboard"';
+        const line1 = javaGenerator.valueToCode(block, 'LINE1', javaGenerator.ORDER_NONE) || '"Line 1"';
+        const score1 = javaGenerator.valueToCode(block, 'SCORE1', javaGenerator.ORDER_NONE) || '1';
+        const line2 = javaGenerator.valueToCode(block, 'LINE2', javaGenerator.ORDER_NONE) || '"Line 2"';
+        const score2 = javaGenerator.valueToCode(block, 'SCORE2', javaGenerator.ORDER_NONE) || '0';
+
+        if (!target) target = getSmartMe(block);
+
+        return `        if (${target} instanceof Player) {
+            org.bukkit.scoreboard.ScoreboardManager m = Bukkit.getScoreboardManager();
+            org.bukkit.scoreboard.Scoreboard b = m.getNewScoreboard();
+            org.bukkit.scoreboard.Objective o = b.registerNewObjective("sb", org.bukkit.scoreboard.Criteria.DUMMY, Component.text(${title}));
+            o.setDisplaySlot(org.bukkit.scoreboard.DisplaySlot.SIDEBAR);
+            o.getScore(String.valueOf(${line1})).setScore((int)${score1});
+            o.getScore(String.valueOf(${line2})).setScore((int)${score2});
+            ((Player)${target}).setScoreboard(b);
+        }\n`;
+    };
+
     // --- LOOPS (For) ---
     javaGenerator.forBlock['controls_for_simple'] = function(block) {
         const variable = block.getFieldValue('VAR');

@@ -42,152 +42,187 @@ const generateToolbox = () => {
     contents.push({ "kind": "block", "type": "ez_event_master" });
     addSep();
 
-    // 2. ACTIONS
-    addLabel("ACTIONS");
-    contents.push({
-        "kind": "block", "type": "ez_action_message",
-        "inputs": { "MSG": { "shadow": { "type": "text_string", "fields": { "TEXT": "Hello!" } } } }
-    });
-    contents.push({
-        "kind": "block", "type": "ez_action_broadcast",
-        "inputs": { "MSG": { "shadow": { "type": "text_string", "fields": { "TEXT": "Alert!" } } } }
-    });
-    contents.push({
-        "kind": "block", "type": "ez_action_title",
-        "inputs": {
-            "TITLE": { "shadow": { "type": "text_string", "fields": { "TEXT": "Welcome" } } },
-            "SUBTITLE": { "shadow": { "type": "text_string", "fields": { "TEXT": "Enjoy the server" } } }
-        }
-    });
-    contents.push({ "kind": "block", "type": "ez_action_sound" });
-    contents.push({ "kind": "block", "type": "ez_action_particle" });
-    contents.push({
-        "kind": "block", "type": "ez_action_log",
-        "inputs": { "MSG": { "shadow": { "type": "text_string", "fields": { "TEXT": "Debug info" } } } }
-    });
-    contents.push({ "kind": "block", "type": "ez_action_console_command" });
+        // 2. ACTIONS
+        addLabel("ACTIONS");
+        contents.push({ 
+            "kind": "block", "type": "ez_action_message",
+            "inputs": { "MSG": { "shadow": { "type": "text_string", "fields": { "TEXT": "Hello!" } } } }
+        });
+        contents.push({ 
+            "kind": "block", "type": "ez_action_broadcast",
+            "inputs": { "MSG": { "shadow": { "type": "text_string", "fields": { "TEXT": "Alert!" } } } }
+        });
+        contents.push({ 
+            "kind": "block", "type": "ez_action_title",
+            "inputs": { 
+                "TITLE": { "shadow": { "type": "text_string", "fields": { "TEXT": "Welcome" } } },
+                "SUBTITLE": { "shadow": { "type": "text_string", "fields": { "TEXT": "Enjoy the server" } } } 
+            }
+        });
+        contents.push({ 
+            "kind": "block", "type": "ez_action_set_tablist",
+            "inputs": { 
+                "HEADER": { "shadow": { "type": "text_string", "fields": { "TEXT": "Welcome!" } } },
+                "FOOTER": { "shadow": { "type": "text_string", "fields": { "TEXT": "play.myserver.com" } } } 
+            }
+        });
+        contents.push({ 
+            "kind": "block", "type": "ez_action_bossbar_show_timed",
+            "inputs": { 
+                "TITLE": { "shadow": { "type": "text_string", "fields": { "TEXT": "Boss Info" } } },
+                "SECONDS": { "shadow": { "type": "math_number", "fields": { "NUM": 10 } } }
+            }
+        });
+        contents.push({ 
+            "kind": "block", "type": "ez_action_scoreboard_set",
+            "inputs": { 
+                "TITLE": { "shadow": { "type": "text_string", "fields": { "TEXT": "Stats" } } },
+                "LINE1": { "shadow": { "type": "text_string", "fields": { "TEXT": "Coins" } } },
+                "SCORE1": { "shadow": { "type": "math_number", "fields": { "NUM": 100 } } },
+                "LINE2": { "shadow": { "type": "text_string", "fields": { "TEXT": "Kills" } } },
+                "SCORE2": { "shadow": { "type": "math_number", "fields": { "NUM": 0 } } }
+            }
+        });
     
-    // Commands
-    addLabel("COMMANDS");
-    contents.push({ "kind": "block", "type": "paper_command" });
-    contents.push({ "kind": "block", "type": "paper_command_arg_get" });
-    addSep();
-
-    // 3. PLAYER
-    addLabel("PLAYER");
-    contents.push({ "kind": "block", "type": "ez_val_me" });
-    contents.push({ "kind": "block", "type": "ez_val_victim" });
-    contents.push({ "kind": "block", "type": "ez_val_attacker" });
-    contents.push({
-        "kind": "block", "type": "ez_action_give",
-        "inputs": { "AMOUNT": { "shadow": { "type": "math_number", "fields": { "NUM": 1 } } } }
-    });
-    contents.push({ "kind": "block", "type": "ez_action_inventory_clear" });
-    contents.push({ "kind": "block", "type": "ez_action_inventory_has" });
+        contents.push({ "kind": "block", "type": "ez_action_sound" });
+        contents.push({ "kind": "block", "type": "ez_action_particle" });
+        contents.push({ 
+            "kind": "block", "type": "ez_action_log",
+            "inputs": { "MSG": { "shadow": { "type": "text_string", "fields": { "TEXT": "Debug info" } } } }
+        });
+        contents.push({ "kind": "block", "type": "ez_action_console_command" });
+        
+        // Commands
+        addLabel("COMMANDS");
+        contents.push({ "kind": "block", "type": "paper_command" });
+        contents.push({ "kind": "block", "type": "paper_command_arg_get" });
+        addSep();
     
-    contents.push({
-        "kind": "block", "type": "ez_action_set_health",
-        "inputs": { "HEALTH": { "shadow": { "type": "math_number", "fields": { "NUM": 20 } } } }
-    });
-    contents.push({ "kind": "block", "type": "ez_action_toggle_flight" });
-    contents.push({ "kind": "block", "type": "ez_action_set_gamemode" });
-    contents.push({ "kind": "block", "type": "ez_action_launch_projectile" });
-
-    // Effects
-    contents.push({
-        "kind": "block", "type": "ez_action_effect_add",
-        "inputs": {
-            "DURATION": { "shadow": { "type": "math_number", "fields": { "NUM": 10 } } },
-            "AMPLIFIER": { "shadow": { "type": "math_number", "fields": { "NUM": 1 } } }
-        }
-    });
-    contents.push({ "kind": "block", "type": "ez_action_effect_clear" });
-
-    // Attributes
-    contents.push({
-        "kind": "block", "type": "paper_action_set_attribute",
-        "inputs": { "VALUE": { "shadow": { "type": "math_number", "fields": { "NUM": 0 } } } }
-    });
-    contents.push({
-        "kind": "block", "type": "ez_action_attribute_change",
-        "inputs": { "AMOUNT": { "shadow": { "type": "math_number", "fields": { "NUM": 1 } } } }
-    });
-    contents.push({ "kind": "block", "type": "ez_expr_attribute_get" });
-
-    // Admin
-    contents.push({ "kind": "block", "type": "ez_action_ban" });
-    contents.push({ "kind": "block", "type": "ez_action_kick" });
-    addSep();
-
-    // 4. WORLD
-    addLabel("WORLD");
-    contents.push({ "kind": "block", "type": "ez_action_teleport" });
-    contents.push({ "kind": "block", "type": "ez_action_replace_block" });
-    contents.push({ "kind": "block", "type": "ez_action_spawn_lightning" });
-    contents.push({
-        "kind": "block", "type": "ez_action_explosion",
-        "inputs": { "POWER": { "shadow": { "type": "math_number", "fields": { "NUM": 4 } } } }
-    });
-    contents.push({ "kind": "block", "type": "ez_action_set_time" });
-    contents.push({ "kind": "block", "type": "ez_action_set_weather" });
+        // 3. PLAYER
+        addLabel("PLAYER");
+        contents.push({ "kind": "block", "type": "ez_val_me" });
+        contents.push({ "kind": "block", "type": "ez_val_player_ping" });
+        contents.push({ "kind": "block", "type": "ez_val_victim" });
+        contents.push({ "kind": "block", "type": "ez_val_attacker" });
+        contents.push({ 
+            "kind": "block", "type": "ez_action_give",
+            "inputs": { "AMOUNT": { "shadow": { "type": "math_number", "fields": { "NUM": 1 } } } }
+        });
+        contents.push({ "kind": "block", "type": "ez_action_inventory_clear" });
+        contents.push({ "kind": "block", "type": "ez_action_inventory_has" });
+        
+        contents.push({ 
+            "kind": "block", "type": "ez_action_set_health",
+            "inputs": { "HEALTH": { "shadow": { "type": "math_number", "fields": { "NUM": 20 } } } }
+        });
+        contents.push({ "kind": "block", "type": "ez_action_toggle_flight" });
+        contents.push({ "kind": "block", "type": "ez_action_set_gamemode" });
+        contents.push({ "kind": "block", "type": "ez_action_launch_projectile" });
     
-    contents.push({ "kind": "block", "type": "ez_val_location_of" });
-    contents.push({
-        "kind": "block", "type": "ez_val_coords",
-        "inputs": {
-            "X": { "shadow": { "type": "math_number", "fields": { "NUM": 0 } } },
-            "Y": { "shadow": { "type": "math_number", "fields": { "NUM": 0 } } },
-            "Z": { "shadow": { "type": "math_number", "fields": { "NUM": 0 } } }
-        }
-    });
-    addSep();
-
-    // 5. CONTROL
-    addLabel("CONTROL");
-    contents.push({
-        "kind": "block", "type": "ez_control_wait",
-        "inputs": { "SECONDS": { "shadow": { "type": "math_number", "fields": { "NUM": 1 } } } }
-    });
-    contents.push({ "kind": "block", "type": "controls_if" });
-    contents.push({ "kind": "block", "type": "controls_repeat_ext", "inputs": { "TIMES": { "shadow": { "type": "math_number", "fields": { "NUM": 10 } } } } });
-    contents.push({ "kind": "block", "type": "controls_whileUntil" });
-    contents.push({ "kind": "block", "type": "controls_for_simple", "inputs": { "FROM": { "shadow": { "type": "math_number", "fields": { "NUM": 1 } } }, "TO": { "shadow": { "type": "math_number", "fields": { "NUM": 10 } } } } });
-    addSep();
-
-    // 6. DATA (Variables)
-    addLabel("VARIABLES");
-    contents.push({ "kind": "block", "type": "var_declare_typed" });
-    contents.push({ "kind": "block", "type": "var_set_typed" });
-    contents.push({ "kind": "block", "type": "var_get_typed" });
-    contents.push({ "kind": "block", "type": "ez_data_set_global" });
-    contents.push({ "kind": "block", "type": "ez_data_get_global" });
+        // Effects
+        contents.push({ 
+            "kind": "block", "type": "ez_action_effect_add",
+            "inputs": { 
+                "DURATION": { "shadow": { "type": "math_number", "fields": { "NUM": 10 } } },
+                "AMPLIFIER": { "shadow": { "type": "math_number", "fields": { "NUM": 1 } } }
+            }
+        });
+        contents.push({ "kind": "block", "type": "ez_action_effect_clear" });
     
-    contents.push({ "kind": "block", "type": "lists_create_new" });
-    contents.push({ "kind": "block", "type": "lists_add" });
-    contents.push({ "kind": "block", "type": "lists_get_index" });
-    contents.push({ "kind": "block", "type": "lists_size" });
-
-    // 7. MATH
-    addLabel("MATH");
-    contents.push({ "kind": "block", "type": "math_number" });
-    contents.push({ "kind": "block", "type": "math_arithmetic" });
-    contents.push({ "kind": "block", "type": "logic_compare" });
-    contents.push({ "kind": "block", "type": "logic_operation" });
-    contents.push({ "kind": "block", "type": "logic_boolean" });
-    contents.push({ "kind": "block", "type": "ez_convert_to_number" });
-
-    // 8. TEXT
-    addLabel("TEXT");
-    contents.push({ "kind": "block", "type": "text_string" });
-    contents.push({ "kind": "block", "type": "ez_convert_to_string" });
-    addSep();
-
-    // 9. FILES
-    addLabel("FILES");
-    contents.push({ "kind": "block", "type": "ez_config_set" });
-    contents.push({ "kind": "block", "type": "ez_config_get" });
-    addSep();
-
+        // Attributes
+        contents.push({ 
+            "kind": "block", "type": "paper_action_set_attribute",
+            "inputs": { "VALUE": { "shadow": { "type": "math_number", "fields": { "NUM": 0 } } } }
+        });
+        contents.push({ 
+            "kind": "block", "type": "ez_action_attribute_change",
+            "inputs": { "AMOUNT": { "shadow": { "type": "math_number", "fields": { "NUM": 1 } } } }
+        });
+        contents.push({ "kind": "block", "type": "ez_expr_attribute_get" });
+    
+        // Admin
+        contents.push({ "kind": "block", "type": "ez_action_ban" });
+        contents.push({ "kind": "block", "type": "ez_action_kick" });
+        addSep();
+    
+        // 4. WORLD
+        addLabel("WORLD");
+        contents.push({ "kind": "block", "type": "ez_action_teleport" });
+        contents.push({ "kind": "block", "type": "ez_action_replace_block" });
+        contents.push({ "kind": "block", "type": "ez_action_spawn_lightning" });
+        contents.push({ 
+            "kind": "block", "type": "ez_action_explosion",
+            "inputs": { "POWER": { "shadow": { "type": "math_number", "fields": { "NUM": 4 } } } }
+        });
+        contents.push({ "kind": "block", "type": "ez_action_set_time" });
+        contents.push({ "kind": "block", "type": "ez_action_set_weather" });
+        
+        contents.push({ "kind": "block", "type": "ez_val_location_of" });
+        contents.push({ 
+            "kind": "block", "type": "ez_val_coords",
+            "inputs": {
+                "X": { "shadow": { "type": "math_number", "fields": { "NUM": 0 } } },
+                "Y": { "shadow": { "type": "math_number", "fields": { "NUM": 0 } } },
+                "Z": { "shadow": { "type": "math_number", "fields": { "NUM": 0 } } }
+            }
+        });
+        addSep();
+    
+        // 5. CONTROL
+        addLabel("CONTROL");
+        contents.push({ 
+            "kind": "block", "type": "ez_control_wait",
+            "inputs": { "SECONDS": { "shadow": { "type": "math_number", "fields": { "NUM": 1 } } } }
+        });
+        contents.push({ "kind": "block", "type": "controls_if" });
+        contents.push({ "kind": "block", "type": "controls_repeat_ext", "inputs": { "TIMES": { "shadow": { "type": "math_number", "fields": { "NUM": 10 } } } } });
+        contents.push({ "kind": "block", "type": "controls_whileUntil" });
+        contents.push({ "kind": "block", "type": "controls_for_simple", "inputs": { "FROM": { "shadow": { "type": "math_number", "fields": { "NUM": 1 } } }, "TO": { "shadow": { "type": "math_number", "fields": { "NUM": 10 } } } } });
+        addSep();
+    
+        // 6. DATA (Variables)
+        addLabel("VARIABLES");
+        contents.push({ "kind": "block", "type": "var_declare_typed" });
+        contents.push({ "kind": "block", "type": "var_set_typed" });
+        contents.push({ "kind": "block", "type": "var_get_typed" });
+        contents.push({ "kind": "block", "type": "ez_data_set_global" });
+        contents.push({ "kind": "block", "type": "ez_data_get_global" });
+        contents.push({ "kind": "block", "type": "ez_val_server_tps" });
+        
+        contents.push({ "kind": "block", "type": "lists_create_new" });
+        contents.push({ "kind": "block", "type": "lists_add" });
+        contents.push({ "kind": "block", "type": "lists_get_index" });
+        contents.push({ "kind": "block", "type": "lists_size" });
+    
+        // 7. MATH
+        addLabel("MATH");
+        contents.push({ "kind": "block", "type": "math_number" });
+        contents.push({ "kind": "block", "type": "math_arithmetic" });
+        contents.push({ "kind": "block", "type": "logic_compare" });
+        contents.push({ "kind": "block", "type": "logic_operation" });
+        contents.push({ "kind": "block", "type": "logic_boolean" });
+        contents.push({ "kind": "block", "type": "ez_convert_to_number" });
+    
+        // 8. TEXT
+        addLabel("TEXT");
+        contents.push({ "kind": "block", "type": "text_string" });
+        contents.push({ "kind": "block", "type": "ez_convert_to_string" });
+        addSep();
+    
+        // 9. FILES
+        addLabel("FILES");
+        contents.push({ "kind": "block", "type": "ez_config_set" });
+        contents.push({ "kind": "block", "type": "ez_config_get" });
+        addSep();
+        
+        // 10. ADMIN
+        addLabel("ADMIN");
+        contents.push({ 
+            "kind": "block", "type": "ez_action_kick_all",
+            "inputs": { "REASON": { "shadow": { "type": "text_string", "fields": { "TEXT": "Maintenance" } } } }
+        });
+        contents.push({ "kind": "block", "type": "ez_action_stop_server" });
+        addSep();
     // --- API CATEGORIES (Hidden by default) ---
     if (showApi) {
         addLabel("ADVANCED API");

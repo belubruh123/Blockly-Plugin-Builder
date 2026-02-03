@@ -302,6 +302,146 @@ export const defineBlocks = () => {
         }
     });
     
+    // --- SERVER INFO ---
+    Blockly.common.defineBlocks({
+        'ez_val_player_ping': {
+            init: function() {
+                this.appendValueInput("TARGET")
+                    .setCheck("Player")
+                    .appendField("Ping (ms) of");
+                this.setOutput(true, "Number");
+                this.setColour(290);
+                this.setTooltip("Gets the player's connection quality (Ping).");
+            }
+        }
+    });
+
+    Blockly.common.defineBlocks({
+        'ez_val_server_tps': {
+            init: function() {
+                this.appendDummyInput()
+                    .appendField("Server TPS (Lag)");
+                this.setOutput(true, "Number");
+                this.setColour(290);
+                this.setTooltip("Ticks Per Second. 20 is perfect. Lower means lag.");
+            }
+        }
+    });
+
+    // --- VISUALS (Tab, BossBar, Scoreboard) ---
+    Blockly.common.defineBlocks({
+        'ez_action_set_tablist': {
+            init: function() {
+                this.appendValueInput("TARGET")
+                    .setCheck("Player")
+                    .appendField("Set Tab List for");
+                this.appendValueInput("HEADER")
+                    .setCheck(null)
+                    .appendField("Header");
+                this.appendValueInput("FOOTER")
+                    .setCheck(null)
+                    .appendField("Footer");
+                this.setPreviousStatement(true, null);
+                this.setNextStatement(true, null);
+                this.setColour(160);
+            }
+        }
+    });
+
+    Blockly.common.defineBlocks({
+        'ez_action_bossbar_show_timed': {
+            init: function() {
+                this.appendValueInput("TARGET")
+                    .setCheck("Player")
+                    .appendField("Show BossBar to");
+                this.appendValueInput("TITLE")
+                    .setCheck(null)
+                    .appendField("Title");
+                this.appendDummyInput()
+                    .appendField("Color")
+                    .appendField(new Blockly.FieldDropdown([
+                        ["Red", "RED"],
+                        ["Blue", "BLUE"],
+                        ["Green", "GREEN"],
+                        ["Pink", "PINK"],
+                        ["Purple", "PURPLE"],
+                        ["White", "WHITE"],
+                        ["Yellow", "YELLOW"]
+                    ]), "COLOR");
+                this.appendDummyInput()
+                    .appendField("Style")
+                    .appendField(new Blockly.FieldDropdown([
+                        ["Solid", "SOLID"],
+                        ["6 Segments", "SEGMENTED_6"],
+                        ["10 Segments", "SEGMENTED_10"],
+                        ["12 Segments", "SEGMENTED_12"],
+                        ["20 Segments", "SEGMENTED_20"]
+                    ]), "STYLE");
+                this.appendValueInput("SECONDS")
+                    .setCheck("Number")
+                    .appendField("for Seconds");
+                this.setPreviousStatement(true, null);
+                this.setNextStatement(true, null);
+                this.setColour(160);
+            }
+        }
+    });
+    
+    Blockly.common.defineBlocks({
+        'ez_action_scoreboard_set': {
+            init: function() {
+                this.appendValueInput("TARGET")
+                    .setCheck("Player")
+                    .appendField("Set Scoreboard for");
+                this.appendValueInput("TITLE")
+                    .setCheck(null)
+                    .appendField("Title");
+                this.appendValueInput("LINE1")
+                    .setCheck(null)
+                    .appendField("Line 1");
+                this.appendValueInput("SCORE1")
+                    .setCheck("Number")
+                    .appendField("Score");
+                 this.appendValueInput("LINE2")
+                    .setCheck(null)
+                    .appendField("Line 2");
+                this.appendValueInput("SCORE2")
+                    .setCheck("Number")
+                    .appendField("Score");
+                this.setPreviousStatement(true, null);
+                this.setNextStatement(true, null);
+                this.setColour(160);
+                this.setTooltip("Sets a simple 2-line sidebar scoreboard.");
+            }
+        }
+    });
+
+    // --- SERVER ADMIN ---
+    Blockly.common.defineBlocks({
+        'ez_action_kick_all': {
+            init: function() {
+                this.appendValueInput("REASON")
+                    .setCheck(null)
+                    .appendField("Kick All Players");
+                this.setPreviousStatement(true, null);
+                this.setNextStatement(true, null);
+                this.setColour(0);
+            }
+        }
+    });
+
+    Blockly.common.defineBlocks({
+        'ez_action_stop_server': {
+            init: function() {
+                this.appendDummyInput()
+                    .appendField("Stop Server (Shutdown)");
+                this.setPreviousStatement(true, null);
+                this.setNextStatement(true, null);
+                this.setColour(0);
+            }
+        }
+    });
+
     // --- SERVER ---
     Blockly.common.defineBlocks({
         'ez_action_console_command': {
