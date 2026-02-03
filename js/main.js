@@ -42,187 +42,188 @@ const generateToolbox = () => {
     contents.push({ "kind": "block", "type": "ez_event_master" });
     addSep();
 
-        // 2. ACTIONS
-        addLabel("ACTIONS");
-        contents.push({ 
-            "kind": "block", "type": "ez_action_message",
-            "inputs": { "MSG": { "shadow": { "type": "text_string", "fields": { "TEXT": "Hello!" } } } }
-        });
-        contents.push({ 
-            "kind": "block", "type": "ez_action_broadcast",
-            "inputs": { "MSG": { "shadow": { "type": "text_string", "fields": { "TEXT": "Alert!" } } } }
-        });
-        contents.push({ 
-            "kind": "block", "type": "ez_action_title",
-            "inputs": { 
-                "TITLE": { "shadow": { "type": "text_string", "fields": { "TEXT": "Welcome" } } },
-                "SUBTITLE": { "shadow": { "type": "text_string", "fields": { "TEXT": "Enjoy the server" } } } 
-            }
-        });
-        contents.push({ 
-            "kind": "block", "type": "ez_action_set_tablist",
-            "inputs": { 
-                "HEADER": { "shadow": { "type": "text_string", "fields": { "TEXT": "Welcome!" } } },
-                "FOOTER": { "shadow": { "type": "text_string", "fields": { "TEXT": "play.myserver.com" } } } 
-            }
-        });
-        contents.push({ 
-            "kind": "block", "type": "ez_action_bossbar_show_timed",
-            "inputs": { 
-                "TITLE": { "shadow": { "type": "text_string", "fields": { "TEXT": "Boss Info" } } },
-                "SECONDS": { "shadow": { "type": "math_number", "fields": { "NUM": 10 } } }
-            }
-        });
-        contents.push({ 
-            "kind": "block", "type": "ez_action_scoreboard_set",
-            "inputs": { 
-                "TITLE": { "shadow": { "type": "text_string", "fields": { "TEXT": "Stats" } } },
-                "LINE1": { "shadow": { "type": "text_string", "fields": { "TEXT": "Coins" } } },
-                "SCORE1": { "shadow": { "type": "math_number", "fields": { "NUM": 100 } } },
-                "LINE2": { "shadow": { "type": "text_string", "fields": { "TEXT": "Kills" } } },
-                "SCORE2": { "shadow": { "type": "math_number", "fields": { "NUM": 0 } } }
-            }
-        });
+    // 2. ACTIONS
+    addLabel("ACTIONS");
+    contents.push({
+        "kind": "block", "type": "ez_action_message",
+        "inputs": { "MSG": { "shadow": { "type": "text_string", "fields": { "TEXT": "Hello!" } } } }
+    });
+    contents.push({
+        "kind": "block", "type": "ez_action_broadcast",
+        "inputs": { "MSG": { "shadow": { "type": "text_string", "fields": { "TEXT": "Alert!" } } } }
+    });
+    contents.push({
+        "kind": "block", "type": "ez_action_title",
+        "inputs": {
+            "TITLE": { "shadow": { "type": "text_string", "fields": { "TEXT": "Welcome" } } },
+            "SUBTITLE": { "shadow": { "type": "text_string", "fields": { "TEXT": "Enjoy the server" } } }
+        }
+    });
+    contents.push({
+        "kind": "block", "type": "ez_action_set_tablist",
+        "inputs": {
+            "HEADER": { "shadow": { "type": "text_string", "fields": { "TEXT": "Welcome!" } } },
+            "FOOTER": { "shadow": { "type": "text_string", "fields": { "TEXT": "play.myserver.com" } } }
+        }
+    });
+    contents.push({
+        "kind": "block", "type": "ez_action_bossbar_show_timed",
+        "inputs": {
+            "TITLE": { "shadow": { "type": "text_string", "fields": { "TEXT": "Boss Info" } } },
+            "SECONDS": { "shadow": { "type": "math_number", "fields": { "NUM": 10 } } }
+        }
+    });
+    contents.push({
+        "kind": "block", "type": "ez_action_scoreboard_set",
+        "inputs": {
+            "TITLE": { "shadow": { "type": "text_string", "fields": { "TEXT": "Stats" } } },
+            "LINE1": { "shadow": { "type": "text_string", "fields": { "TEXT": "Coins" } } },
+            "SCORE1": { "shadow": { "type": "math_number", "fields": { "NUM": 100 } } },
+            "LINE2": { "shadow": { "type": "text_string", "fields": { "TEXT": "Kills" } } },
+            "SCORE2": { "shadow": { "type": "math_number", "fields": { "NUM": 0 } } }
+        }
+    });
+
+    contents.push({ "kind": "block", "type": "ez_action_sound" });
+    contents.push({ "kind": "block", "type": "ez_action_particle" });
+    contents.push({
+        "kind": "block", "type": "ez_action_log",
+        "inputs": { "MSG": { "shadow": { "type": "text_string", "fields": { "TEXT": "Debug info" } } } }
+    });
+    contents.push({ "kind": "block", "type": "ez_action_console_command" });
     
-        contents.push({ "kind": "block", "type": "ez_action_sound" });
-        contents.push({ "kind": "block", "type": "ez_action_particle" });
-        contents.push({ 
-            "kind": "block", "type": "ez_action_log",
-            "inputs": { "MSG": { "shadow": { "type": "text_string", "fields": { "TEXT": "Debug info" } } } }
-        });
-        contents.push({ "kind": "block", "type": "ez_action_console_command" });
-        
-        // Commands
-        addLabel("COMMANDS");
-        contents.push({ "kind": "block", "type": "paper_command" });
-        contents.push({ "kind": "block", "type": "paper_command_arg_get" });
-        addSep();
+    // Commands
+    addLabel("COMMANDS");
+    contents.push({ "kind": "block", "type": "paper_command" });
+    contents.push({ "kind": "block", "type": "paper_command_arg_get" });
+    addSep();
+
+    // 3. PLAYER
+    addLabel("PLAYER");
+    contents.push({ "kind": "block", "type": "ez_val_me" });
+    contents.push({ "kind": "block", "type": "ez_val_player_ping" });
+    contents.push({ "kind": "block", "type": "ez_val_victim" });
+    contents.push({ "kind": "block", "type": "ez_val_attacker" });
+    contents.push({
+        "kind": "block", "type": "ez_action_give",
+        "inputs": { "AMOUNT": { "shadow": { "type": "math_number", "fields": { "NUM": 1 } } } }
+    });
+    contents.push({ "kind": "block", "type": "ez_action_inventory_clear" });
+    contents.push({ "kind": "block", "type": "ez_action_inventory_has" });
     
-        // 3. PLAYER
-        addLabel("PLAYER");
-        contents.push({ "kind": "block", "type": "ez_val_me" });
-        contents.push({ "kind": "block", "type": "ez_val_player_ping" });
-        contents.push({ "kind": "block", "type": "ez_val_victim" });
-        contents.push({ "kind": "block", "type": "ez_val_attacker" });
-        contents.push({ 
-            "kind": "block", "type": "ez_action_give",
-            "inputs": { "AMOUNT": { "shadow": { "type": "math_number", "fields": { "NUM": 1 } } } }
-        });
-        contents.push({ "kind": "block", "type": "ez_action_inventory_clear" });
-        contents.push({ "kind": "block", "type": "ez_action_inventory_has" });
-        
-        contents.push({ 
-            "kind": "block", "type": "ez_action_set_health",
-            "inputs": { "HEALTH": { "shadow": { "type": "math_number", "fields": { "NUM": 20 } } } }
-        });
-        contents.push({ "kind": "block", "type": "ez_action_toggle_flight" });
-        contents.push({ "kind": "block", "type": "ez_action_set_gamemode" });
-        contents.push({ "kind": "block", "type": "ez_action_launch_projectile" });
+    contents.push({
+        "kind": "block", "type": "ez_action_set_health",
+        "inputs": { "HEALTH": { "shadow": { "type": "math_number", "fields": { "NUM": 20 } } } }
+    });
+    contents.push({ "kind": "block", "type": "ez_action_toggle_flight" });
+    contents.push({ "kind": "block", "type": "ez_action_set_gamemode" });
+    contents.push({ "kind": "block", "type": "ez_action_launch_projectile" });
+
+    // Effects
+    contents.push({
+        "kind": "block", "type": "ez_action_effect_add",
+        "inputs": {
+            "DURATION": { "shadow": { "type": "math_number", "fields": { "NUM": 10 } } },
+            "AMPLIFIER": { "shadow": { "type": "math_number", "fields": { "NUM": 1 } } }
+        }
+    });
+    contents.push({ "kind": "block", "type": "ez_action_effect_clear" });
+
+    // Attributes
+    contents.push({
+        "kind": "block", "type": "paper_action_set_attribute",
+        "inputs": { "VALUE": { "shadow": { "type": "math_number", "fields": { "NUM": 0 } } } }
+    });
+    contents.push({
+        "kind": "block", "type": "ez_action_attribute_change",
+        "inputs": { "AMOUNT": { "shadow": { "type": "math_number", "fields": { "NUM": 1 } } } }
+    });
+    contents.push({ "kind": "block", "type": "ez_expr_attribute_get" });
+
+    // Admin
+    contents.push({ "kind": "block", "type": "ez_action_ban" });
+    contents.push({ "kind": "block", "type": "ez_action_kick" });
+    addSep();
+
+    // 4. WORLD
+    addLabel("WORLD");
+    contents.push({ "kind": "block", "type": "ez_action_teleport" });
+    contents.push({ "kind": "block", "type": "ez_action_replace_block" });
+    contents.push({ "kind": "block", "type": "ez_action_spawn_lightning" });
+    contents.push({
+        "kind": "block", "type": "ez_action_explosion",
+        "inputs": { "POWER": { "shadow": { "type": "math_number", "fields": { "NUM": 4 } } } }
+    });
+    contents.push({ "kind": "block", "type": "ez_action_set_time" });
+    contents.push({ "kind": "block", "type": "ez_action_set_weather" });
     
-        // Effects
-        contents.push({ 
-            "kind": "block", "type": "ez_action_effect_add",
-            "inputs": { 
-                "DURATION": { "shadow": { "type": "math_number", "fields": { "NUM": 10 } } },
-                "AMPLIFIER": { "shadow": { "type": "math_number", "fields": { "NUM": 1 } } }
-            }
-        });
-        contents.push({ "kind": "block", "type": "ez_action_effect_clear" });
+    contents.push({ "kind": "block", "type": "ez_val_location_of" });
+    contents.push({
+        "kind": "block", "type": "ez_val_coords",
+        "inputs": {
+            "X": { "shadow": { "type": "math_number", "fields": { "NUM": 0 } } },
+            "Y": { "shadow": { "type": "math_number", "fields": { "NUM": 0 } } },
+            "Z": { "shadow": { "type": "math_number", "fields": { "NUM": 0 } } }
+        }
+    });
+    addSep();
+
+    // 5. CONTROL
+    addLabel("CONTROL");
+    contents.push({
+        "kind": "block", "type": "ez_control_wait",
+        "inputs": { "SECONDS": { "shadow": { "type": "math_number", "fields": { "NUM": 1 } } } }
+    });
+    contents.push({ "kind": "block", "type": "controls_if" });
+    contents.push({ "kind": "block", "type": "controls_repeat_ext", "inputs": { "TIMES": { "shadow": { "type": "math_number", "fields": { "NUM": 10 } } } } });
+    contents.push({ "kind": "block", "type": "controls_whileUntil" });
+    contents.push({ "kind": "block", "type": "controls_for_simple", "inputs": { "FROM": { "shadow": { "type": "math_number", "fields": { "NUM": 1 } } }, "TO": { "shadow": { "type": "math_number", "fields": { "NUM": 10 } } } } });
+    addSep();
+
+    // 6. DATA (Variables)
+    addLabel("VARIABLES");
+    contents.push({ "kind": "block", "type": "var_declare_typed" });
+    contents.push({ "kind": "block", "type": "var_set_typed" });
+    contents.push({ "kind": "block", "type": "var_get_typed" });
+    contents.push({ "kind": "block", "type": "ez_data_set_global" });
+    contents.push({ "kind": "block", "type": "ez_data_get_global" });
+    contents.push({ "kind": "block", "type": "ez_val_server_tps" });
     
-        // Attributes
-        contents.push({ 
-            "kind": "block", "type": "paper_action_set_attribute",
-            "inputs": { "VALUE": { "shadow": { "type": "math_number", "fields": { "NUM": 0 } } } }
-        });
-        contents.push({ 
-            "kind": "block", "type": "ez_action_attribute_change",
-            "inputs": { "AMOUNT": { "shadow": { "type": "math_number", "fields": { "NUM": 1 } } } }
-        });
-        contents.push({ "kind": "block", "type": "ez_expr_attribute_get" });
+    contents.push({ "kind": "block", "type": "lists_create_new" });
+    contents.push({ "kind": "block", "type": "lists_add" });
+    contents.push({ "kind": "block", "type": "lists_get_index" });
+    contents.push({ "kind": "block", "type": "lists_size" });
+
+    // 7. MATH
+    addLabel("MATH");
+    contents.push({ "kind": "block", "type": "math_number" });
+    contents.push({ "kind": "block", "type": "math_arithmetic" });
+    contents.push({ "kind": "block", "type": "logic_compare" });
+    contents.push({ "kind": "block", "type": "logic_operation" });
+    contents.push({ "kind": "block", "type": "logic_boolean" });
+    contents.push({ "kind": "block", "type": "ez_convert_to_number" });
+
+    // 8. TEXT
+    addLabel("TEXT");
+    contents.push({ "kind": "block", "type": "text_string" });
+    contents.push({ "kind": "block", "type": "ez_convert_to_string" });
+    addSep();
+
+    // 9. FILES
+    addLabel("FILES");
+    contents.push({ "kind": "block", "type": "ez_config_set" });
+    contents.push({ "kind": "block", "type": "ez_config_get" });
+    addSep();
     
-        // Admin
-        contents.push({ "kind": "block", "type": "ez_action_ban" });
-        contents.push({ "kind": "block", "type": "ez_action_kick" });
-        addSep();
-    
-        // 4. WORLD
-        addLabel("WORLD");
-        contents.push({ "kind": "block", "type": "ez_action_teleport" });
-        contents.push({ "kind": "block", "type": "ez_action_replace_block" });
-        contents.push({ "kind": "block", "type": "ez_action_spawn_lightning" });
-        contents.push({ 
-            "kind": "block", "type": "ez_action_explosion",
-            "inputs": { "POWER": { "shadow": { "type": "math_number", "fields": { "NUM": 4 } } } }
-        });
-        contents.push({ "kind": "block", "type": "ez_action_set_time" });
-        contents.push({ "kind": "block", "type": "ez_action_set_weather" });
-        
-        contents.push({ "kind": "block", "type": "ez_val_location_of" });
-        contents.push({ 
-            "kind": "block", "type": "ez_val_coords",
-            "inputs": {
-                "X": { "shadow": { "type": "math_number", "fields": { "NUM": 0 } } },
-                "Y": { "shadow": { "type": "math_number", "fields": { "NUM": 0 } } },
-                "Z": { "shadow": { "type": "math_number", "fields": { "NUM": 0 } } }
-            }
-        });
-        addSep();
-    
-        // 5. CONTROL
-        addLabel("CONTROL");
-        contents.push({ 
-            "kind": "block", "type": "ez_control_wait",
-            "inputs": { "SECONDS": { "shadow": { "type": "math_number", "fields": { "NUM": 1 } } } }
-        });
-        contents.push({ "kind": "block", "type": "controls_if" });
-        contents.push({ "kind": "block", "type": "controls_repeat_ext", "inputs": { "TIMES": { "shadow": { "type": "math_number", "fields": { "NUM": 10 } } } } });
-        contents.push({ "kind": "block", "type": "controls_whileUntil" });
-        contents.push({ "kind": "block", "type": "controls_for_simple", "inputs": { "FROM": { "shadow": { "type": "math_number", "fields": { "NUM": 1 } } }, "TO": { "shadow": { "type": "math_number", "fields": { "NUM": 10 } } } } });
-        addSep();
-    
-        // 6. DATA (Variables)
-        addLabel("VARIABLES");
-        contents.push({ "kind": "block", "type": "var_declare_typed" });
-        contents.push({ "kind": "block", "type": "var_set_typed" });
-        contents.push({ "kind": "block", "type": "var_get_typed" });
-        contents.push({ "kind": "block", "type": "ez_data_set_global" });
-        contents.push({ "kind": "block", "type": "ez_data_get_global" });
-        contents.push({ "kind": "block", "type": "ez_val_server_tps" });
-        
-        contents.push({ "kind": "block", "type": "lists_create_new" });
-        contents.push({ "kind": "block", "type": "lists_add" });
-        contents.push({ "kind": "block", "type": "lists_get_index" });
-        contents.push({ "kind": "block", "type": "lists_size" });
-    
-        // 7. MATH
-        addLabel("MATH");
-        contents.push({ "kind": "block", "type": "math_number" });
-        contents.push({ "kind": "block", "type": "math_arithmetic" });
-        contents.push({ "kind": "block", "type": "logic_compare" });
-        contents.push({ "kind": "block", "type": "logic_operation" });
-        contents.push({ "kind": "block", "type": "logic_boolean" });
-        contents.push({ "kind": "block", "type": "ez_convert_to_number" });
-    
-        // 8. TEXT
-        addLabel("TEXT");
-        contents.push({ "kind": "block", "type": "text_string" });
-        contents.push({ "kind": "block", "type": "ez_convert_to_string" });
-        addSep();
-    
-        // 9. FILES
-        addLabel("FILES");
-        contents.push({ "kind": "block", "type": "ez_config_set" });
-        contents.push({ "kind": "block", "type": "ez_config_get" });
-        addSep();
-        
-        // 10. ADMIN
-        addLabel("ADMIN");
-        contents.push({ 
-            "kind": "block", "type": "ez_action_kick_all",
-            "inputs": { "REASON": { "shadow": { "type": "text_string", "fields": { "TEXT": "Maintenance" } } } }
-        });
-        contents.push({ "kind": "block", "type": "ez_action_stop_server" });
-        addSep();
+    // 10. ADMIN
+    addLabel("ADMIN");
+    contents.push({
+        "kind": "block", "type": "ez_action_kick_all",
+        "inputs": { "REASON": { "shadow": { "type": "text_string", "fields": { "TEXT": "Maintenance" } } } }
+    });
+    contents.push({ "kind": "block", "type": "ez_action_stop_server" });
+    addSep();
+
     // --- API CATEGORIES (Hidden by default) ---
     if (showApi) {
         addLabel("ADVANCED API");
@@ -449,37 +450,164 @@ ${cmd.code}
 
 // Generate Basic POM
 const generatePomXml = (groupId, artifactId, version) => {
-    return `<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+    return 
+`<project xmlns="http://maven.apache.org/POM/4.0.0"\n         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"\n         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">\n    <modelVersion>4.0.0</modelVersion>\n\n    <groupId>
+        ${groupId}</groupId>\n    <artifactId>${artifactId}</artifactId>\n    <version>${version}</version>\n    <packaging>jar</packaging>\n\n    <name>${artifactId}</name>\n\n    <properties>\n        <java.version>21</java.version>\n        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>\n    </properties>\n\n    <build>\n        <plugins>\n            <plugin>\n                <groupId>org.apache.maven.plugins</groupId>\n                <artifactId>maven-compiler-plugin</artifactId>\n                <version>3.13.0</version>\n                <configuration>\n                    <source>\
+                        ${java.version}</source>\n                    <target>\
+                        ${java.version}</target>\n                </configuration>\n            </plugin>\n        </plugins>\n    </build>\n\n    <repositories>\n        <repository>\n            <id>papermc-repo</id>\n            <url>https://repo.papermc.io/repository/maven-public/</url>\n        </repository>\n    </repositories>\n\n    <dependencies>\n        <dependency>\n            <groupId>io.papermc.paper</groupId>\n            <artifactId>paper-api</artifactId>\n            <version>1.21.4-R0.1-SNAPSHOT</version>\n            <scope>provided</scope>\n        </dependency>\n    </dependencies>\n</project>
+`;
+};
 
-    <groupId>${groupId}</groupId>
-    <artifactId>${artifactId}</artifactId>
-    <version>${version}</version>
-    <packaging>jar</packaging>
+// Local override for YML to support dynamic package
+const generatePluginYmlLocal = (projectName, version, commands, author, packageName) => {
+    let yml = 
+`name: ${projectName}
+version: ${version}
+main: ${packageName}.Main
+api-version: 1.21
+author: ${author || 'Unknown'}
+`;
 
-    <name>${artifactId}</name>
+    if (commands && commands.length > 0) {
+        yml += 
+`commands:
+`;
+        commands.forEach(cmd => {
+            yml += 
+`  ${cmd}:
+`;
+            yml += 
+`    description: Auto-generated command ${cmd}
+`;
+            yml += 
+`    usage: /${cmd}
+`;
+        });
+    }
+    return yml;
+};
 
-    <properties>
-        <java.version>21</java.version>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
+// --- DOWNLOAD LOGIC ---
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.13.0</version>
-                <configuration>
-                    <source>
-                        																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																													*/*
- * This file is part of the `blockly-plugin` project.
- * Copyright (c) 2023-2024 Elias Fischer
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */
+const downloadProject = () => {
+    const zip = new JSZip();
+    const projectName = document.getElementById('project-name').value || "MyPlugin";
+    const folder = zip.folder(projectName);
 
-// --- IMPORTS ---
+    // Source Folder
+    const srcFolder = folder.folder("src").folder("main");
+    const javaFolder = srcFolder.folder("java").folder(currentPackagePath);
+    const resourcesFolder = srcFolder.folder("resources");
+
+    // Add Files
+    Object.keys(generatedFiles).forEach(filename => {
+        if (filename.endsWith(".java")) {
+            javaFolder.file(filename, generatedFiles[filename]);
+        } else if (filename === "plugin.yml") {
+            resourcesFolder.file(filename, generatedFiles[filename]);
+        } else if (filename === "pom.xml") {
+            folder.file(filename, generatedFiles[filename]);
+        }
+    });
+
+    // Generate ZIP
+    zip.generateAsync({type:"blob"}).then(function(content) {
+        // Create fake link to download
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(content);
+        a.download = `${projectName}.zip`;
+        a.click();
+    });
+};
+
+// --- SAVE / LOAD STATE ---
+
+const saveState = () => {
+    const state = Blockly.serialization.workspaces.save(workspace);
+    localStorage.setItem('blocklyWorkspace', JSON.stringify(state));
+    
+    // Save Meta
+    localStorage.setItem('projectMeta', JSON.stringify({
+        name: document.getElementById('project-name').value,
+        author: document.getElementById('project-author').value,
+        version: document.getElementById('project-version').value
+    }));
+};
+
+const loadState = () => {
+    const state = localStorage.getItem('blocklyWorkspace');
+    if (state) {
+        Blockly.serialization.workspaces.load(JSON.parse(state), workspace);
+    }
+    
+    const meta = localStorage.getItem('projectMeta');
+    if (meta) {
+        const m = JSON.parse(meta);
+        if (m.name) document.getElementById('project-name').value = m.name;
+        if (m.author) document.getElementById('project-author').value = m.author;
+        if (m.version) document.getElementById('project-version').value = m.version;
+    }
+};
+
+
+// --- UI LOGIC ---
+
+const updateTabs = () => {
+    const tabContainer = document.getElementById('file-tabs');
+    tabContainer.innerHTML = '';
+
+    Object.keys(generatedFiles).forEach(filename => {
+        const btn = document.createElement('button');
+        btn.innerText = filename;
+        btn.className = `px-4 py-3 text-sm font-medium focus:outline-none whitespace-nowrap transition-colors ${filename === currentFile ? 'text-green-500 border-b-2 border-green-500 bg-gray-900' : 'text-gray-400 hover:text-gray-200 border-b-2 border-transparent'}`;
+        btn.onclick = () => {
+            currentFile = filename;
+            showFile(filename);
+            updateTabs(); // Re-render to update active state
+        };
+        tabContainer.appendChild(btn);
+    });
+};
+
+const showFile = (filename) => {
+    // If file doesn't exist (e.g. deleted command), default to Main.java
+    if (!generatedFiles[filename]) {
+        currentFile = 'Main.java';
+        filename = 'Main.java';
+    }
+    
+    const codeArea = document.getElementById('code-output');
+    codeArea.value = generatedFiles[filename] || "";
+    
+    // Update footer path
+    let path = "";
+    if (filename === 'plugin.yml') path = 'src/main/resources/plugin.yml';
+    else if (filename === 'pom.xml') path = 'pom.xml';
+    else path = `src/main/java/${currentPackagePath}/${filename}`;
+    
+    document.getElementById('file-path-footer').innerText = path;
+};
+
+// Event Listeners
+document.getElementById('btn-generate').onclick = generateCode;
+document.getElementById('btn-download').onclick = downloadProject;
+
+workspace.addChangeListener(Blockly.Events.disableOrphans);
+
+// Real-time Code Generation
+const liveGenerator = debounce((event) => {
+    // Don't generate on UI events (clicks, scrolling) to save performance
+    if (event.type === Blockly.Events.UI) return;
+    generateCode();
+}, 200);
+
+workspace.addChangeListener(liveGenerator);
+
+// Initial Run
+loadState(); // Load previous work
+generateCode(); // Generate initial code
+
+// Window Resize Fix for Blockly
+window.addEventListener('resize', () => {
+    Blockly.svgResize(workspace);
+});
