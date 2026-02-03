@@ -95,6 +95,37 @@ const generateToolbox = () => {
         ]
     });
 
+    // 3.7 Data / Config (For TPA/Home)
+    contents.push({
+        "kind": "category",
+        "name": "Data / Config",
+        "colour": "290",
+        "contents": [
+             { "kind": "block", "type": "ez_config_set" },
+             { "kind": "block", "type": "ez_config_get" },
+             { "kind": "block", "type": "ez_data_set_global" },
+             { "kind": "block", "type": "ez_data_get_global" },
+             { "kind": "block", "type": "ez_convert_to_string" },
+             { "kind": "block", "type": "ez_convert_to_number" }
+        ]
+    });
+
+    // 3.8 Fun / Troll / Admin
+    contents.push({
+        "kind": "category",
+        "name": "Fun & Admin",
+        "colour": "0",
+        "contents": [
+             { "kind": "block", "type": "paper_event_entity_death" },
+             { "kind": "block", "type": "ez_val_victim" },
+             { "kind": "block", "type": "ez_val_attacker" },
+             { "kind": "block", "type": "ez_action_ban" },
+             { "kind": "block", "type": "ez_action_kick" },
+             { "kind": "block", "type": "ez_action_sound" },
+             { "kind": "block", "type": "ez_action_particle" }
+        ]
+    });
+
     // 4. My Data
     contents.push({
         "kind": "category",
@@ -327,6 +358,8 @@ import org.bukkit.*;
 import org.bukkit.entity.*;
 import org.bukkit.block.Block;
 import org.bukkit.attribute.Attribute;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * ${projectNameRaw} v${version}
@@ -334,8 +367,13 @@ import org.bukkit.attribute.Attribute;
  */
 public class Main extends JavaPlugin implements Listener {
 
+    public static Map<String, Object> globalData = new HashMap<>();
+
     @Override
     public void onEnable() {
+        // Config
+        saveDefaultConfig();
+
         // Register Events
         getServer().getPluginManager().registerEvents(this, this);
         
@@ -343,6 +381,11 @@ public class Main extends JavaPlugin implements Listener {
 ${commands.map(c => `        if (getCommand("${c.name}") != null) getCommand("${c.name}").setExecutor(new ${capitalize(c.name)}Command());`).join('\n')}
         
         getLogger().info("${projectNameRaw} enabled!");
+    }
+
+    // Helper for "Number from Text" block
+    public double tryParseDouble(String s) {
+        try { return Double.parseDouble(s); } catch (Exception e) { return 0; }
     }
 
     ${eventsCode}
@@ -371,8 +414,19 @@ public class ${className} implements CommandExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+        // Access Main helper if needed (but we are in another class).
+        // For simplicity, we assume static access or duplicate helper if needed.
+        // Actually, for "tryParseDouble" usage inside commands, we need it available.
+        // Quick fix: We can rely on Main.getPlugin(Main.class).tryParseDouble() but that's messy.
+        // Better: Make it static or just inline the try-catch in generator?
+        // Generator used 'tryParseDouble', so we need it.
+        // Let's make a local helper in every command class to be safe/easy.
 ${cmd.code}
         return true;
+    }
+
+    public double tryParseDouble(String s) {
+        try { return Double.parseDouble(s); } catch (Exception e) { return 0; }
     }
 }
 `;

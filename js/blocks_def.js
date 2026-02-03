@@ -23,6 +23,126 @@ export const defineBlocks = () => {
         }
     });
 
+    Blockly.common.defineBlocks({
+        'paper_event_entity_death': {
+            init: function() {
+                this.appendDummyInput()
+                    .appendField("When Entity / Player Dies");
+                this.appendStatementInput("DO")
+                    .setCheck(null)
+                    .appendField("do");
+                this.setColour(230);
+                this.setTooltip("Triggers when any living thing dies.");
+            }
+        }
+    });
+
+    // --- EVENT DATA (Context) ---
+    Blockly.common.defineBlocks({
+        'ez_val_victim': {
+            init: function() {
+                this.appendDummyInput()
+                    .appendField("The Victim (Died)");
+                this.setOutput(true, ["Player", "Entity", "LivingEntity"]);
+                this.setColour(290);
+                this.setTooltip("The entity that died.");
+            }
+        }
+    });
+
+    Blockly.common.defineBlocks({
+        'ez_val_attacker': {
+            init: function() {
+                this.appendDummyInput()
+                    .appendField("The Attacker (Killer)");
+                this.setOutput(true, ["Player", "Entity", "LivingEntity"]);
+                this.setColour(290);
+                this.setTooltip("The entity that killed the victim (if any).");
+            }
+        }
+    });
+
+    // --- MODERATION ACTIONS ---
+    Blockly.common.defineBlocks({
+        'ez_action_ban': {
+            init: function() {
+                this.appendValueInput("TARGET")
+                    .setCheck(["Player"])
+                    .appendField("Ban Player");
+                this.appendValueInput("REASON")
+                    .setCheck(null)
+                    .appendField("Reason");
+                this.setPreviousStatement(true, null);
+                this.setNextStatement(true, null);
+                this.setColour(0); // Red
+                this.setTooltip("Bans a player from the server.");
+            }
+        }
+    });
+
+    Blockly.common.defineBlocks({
+        'ez_action_kick': {
+            init: function() {
+                this.appendValueInput("TARGET")
+                    .setCheck(["Player"])
+                    .appendField("Kick Player");
+                this.appendValueInput("REASON")
+                    .setCheck(null)
+                    .appendField("Reason");
+                this.setPreviousStatement(true, null);
+                this.setNextStatement(true, null);
+                this.setColour(0);
+                this.setTooltip("Kicks a player from the server.");
+            }
+        }
+    });
+
+    // --- FX ACTIONS ---
+    Blockly.common.defineBlocks({
+        'ez_action_sound': {
+            init: function() {
+                this.appendValueInput("TARGET")
+                    .setCheck(["Player", "Location", "Entity"])
+                    .appendField("Play Sound at");
+                this.appendDummyInput()
+                    .appendField(new Blockly.FieldDropdown([
+                        ["Explosion", "ENTITY_GENERIC_EXPLODE"],
+                        ["Level Up", "ENTITY_PLAYER_LEVELUP"],
+                        ["Click", "UI_BUTTON_CLICK"],
+                        ["Anvil Land", "BLOCK_ANVIL_LAND"],
+                        ["Ghast Scream", "ENTITY_GHAST_SCREAM"],
+                        ["Villager No", "ENTITY_VILLAGER_NO"],
+                        ["Glass Break", "BLOCK_GLASS_BREAK"]
+                    ]), "SOUND");
+                this.setPreviousStatement(true, null);
+                this.setNextStatement(true, null);
+                this.setColour(160);
+            }
+        }
+    });
+
+    Blockly.common.defineBlocks({
+        'ez_action_particle': {
+            init: function() {
+                this.appendValueInput("LOCATION")
+                    .setCheck(["Location", "Entity"])
+                    .appendField("Spawn Particles at");
+                this.appendDummyInput()
+                    .appendField(new Blockly.FieldDropdown([
+                        ["Heart", "HEART"],
+                        ["Flame", "FLAME"],
+                        ["Smoke", "SMOKE_LARGE"],
+                        ["Explosion", "EXPLOSION_LARGE"],
+                        ["Villager Happy", "VILLAGER_HAPPY"],
+                        ["Soul", "SOUL"]
+                    ]), "PARTICLE");
+                this.setPreviousStatement(true, null);
+                this.setNextStatement(true, null);
+                this.setColour(160);
+            }
+        }
+    });
+
     // --- COMMANDS ---
     Blockly.common.defineBlocks({
         'paper_command': {
@@ -332,6 +452,97 @@ export const defineBlocks = () => {
                 this.setOutput(true, "Location");
                 this.setColour(290);
                 this.setInputsInline(true);
+            }
+        }
+    });
+
+    // --- PERSISTENCE & DATA (For /home, /tpa) ---
+    
+    // Config (Persistent)
+    Blockly.common.defineBlocks({
+        'ez_config_set': {
+            init: function() {
+                this.appendValueInput("PATH")
+                    .setCheck(null)
+                    .appendField("Save Data to Config");
+                this.appendValueInput("VALUE")
+                    .setCheck(null)
+                    .appendField("Value");
+                this.setPreviousStatement(true, null);
+                this.setNextStatement(true, null);
+                this.setColour(290);
+                this.setTooltip("Saves data to config.yml (Saved forever). Use for /sethome.");
+            }
+        }
+    });
+
+    Blockly.common.defineBlocks({
+        'ez_config_get': {
+            init: function() {
+                this.appendValueInput("PATH")
+                    .setCheck(null)
+                    .appendField("Read Data from Config");
+                this.setOutput(true, null);
+                this.setColour(290);
+                this.setTooltip("Reads data from config.yml.");
+            }
+        }
+    });
+
+    // Global Map (Temporary Server Data)
+    Blockly.common.defineBlocks({
+        'ez_data_set_global': {
+            init: function() {
+                this.appendValueInput("KEY")
+                    .setCheck(null)
+                    .appendField("Set Server Variable");
+                this.appendValueInput("VALUE")
+                    .setCheck(null)
+                    .appendField("to");
+                this.setPreviousStatement(true, null);
+                this.setNextStatement(true, null);
+                this.setColour(290);
+                this.setTooltip("Saves data in server memory (Deleted on restart). Use for /tpa requests.");
+            }
+        }
+    });
+
+    Blockly.common.defineBlocks({
+        'ez_data_get_global': {
+            init: function() {
+                this.appendValueInput("KEY")
+                    .setCheck(null)
+                    .appendField("Get Server Variable");
+                this.setOutput(true, null);
+                this.setColour(290);
+                this.setTooltip("Gets data from server memory.");
+            }
+        }
+    });
+
+    // --- CONVERTERS ---
+    Blockly.common.defineBlocks({
+        'ez_convert_to_string': {
+            init: function() {
+                this.appendValueInput("VAL")
+                    .setCheck(null)
+                    .appendField("Text of");
+                this.setOutput(true, "String");
+                this.setColour(230);
+                this.setTooltip("Converts anything to Text.");
+            }
+        }
+    });
+
+    Blockly.common.defineBlocks({
+        'ez_convert_to_number': {
+            init: function() {
+                this.appendValueInput("VAL")
+                    .setCheck(null) // Accept String or other
+                    .appendField("Number from Text");
+                this.setOutput(true, "Number");
+                this.setColour(230);
+                this.setTooltip("Tries to turn Text into a Number.");
             }
         }
     });

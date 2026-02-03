@@ -420,7 +420,7 @@ export const initJavaGenerator = () => {
 
     // --- PAPER SPECIFIC ---
 
-    // Events
+    // --- EVENTS ---
     javaGenerator.forBlock['paper_event'] = function(block) {
         const eventType = block.getFieldValue('EVENT_TYPE');
         const statements = javaGenerator.statementToCode(block, 'DO');
@@ -430,6 +430,107 @@ export const initJavaGenerator = () => {
 ${statements}
     }
 `;
+    };
+
+    javaGenerator.forBlock['paper_event_entity_death'] = function(block) {
+        const statements = javaGenerator.statementToCode(block, 'DO');
+        return `
+    @EventHandler
+    public void onEntityDeath(EntityDeathEvent event) {
+${statements}
+    }
+`;
+    };
+
+    // --- DATA / CONTEXT ---
+    javaGenerator.forBlock['ez_val_victim'] = function(block) {
+        return ['event.getEntity()', javaGenerator.ORDER_ATOMIC];
+    };
+
+    javaGenerator.forBlock['ez_val_attacker'] = function(block) {
+        // killer is nullable
+        return ['event.getEntity().getKiller()', javaGenerator.ORDER_ATOMIC];
+    };
+
+    // --- CONFIG & GLOBAL DATA ---
+    javaGenerator.forBlock['ez_config_set'] = function(block) {
+        const path = javaGenerator.valueToCode(block, 'PATH', javaGenerator.ORDER_NONE) || '"data"';
+        const val = javaGenerator.valueToCode(block, 'VALUE', javaGenerator.ORDER_NONE) || 'null';
+        return `        Main.getPlugin(Main.class).getConfig().set(${path}, ${val});\n        Main.getPlugin(Main.class).saveConfig();\n`;
+    };
+
+    javaGenerator.forBlock['ez_config_get'] = function(block) {
+        const path = javaGenerator.valueToCode(block, 'PATH', javaGenerator.ORDER_NONE) || '"data"';
+        return [`Main.getPlugin(Main.class).getConfig().get(${path})`, javaGenerator.ORDER_ATOMIC];
+    };
+
+    javaGenerator.forBlock['ez_data_set_global'] = function(block) {
+        const key = javaGenerator.valueToCode(block, 'KEY', javaGenerator.ORDER_NONE) || '"key"';
+        const val = javaGenerator.valueToCode(block, 'VALUE', javaGenerator.ORDER_NONE) || 'null';
+        // We assume Main.globalData exists (Map<String, Object>)
+        return `        Main.globalData.put(String.valueOf(${key}), ${val});\n`;
+    };
+
+    javaGenerator.forBlock['ez_data_get_global'] = function(block) {
+        const key = javaGenerator.valueToCode(block, 'KEY', javaGenerator.ORDER_NONE) || '"key"';
+        return [`Main.globalData.get(String.valueOf(${key}))`, javaGenerator.ORDER_ATOMIC];
+    };
+
+    // --- CONVERTERS ---
+    javaGenerator.forBlock['ez_convert_to_string'] = function(block) {
+        const val = javaGenerator.valueToCode(block, 'VAL', javaGenerator.ORDER_NONE) || '""';
+        return [`String.valueOf(${val})`, javaGenerator.ORDER_ATOMIC];
+    };
+
+    javaGenerator.forBlock['ez_convert_to_number'] = function(block) {
+        const val = javaGenerator.valueToCode(block, 'VAL', javaGenerator.ORDER_NONE) || '"0"';
+        // Safety wrapper for scratch kids
+        return [`(tryParseDouble(String.valueOf(${val})))`, javaGenerator.ORDER_ATOMIC];
+    };
+
+    // --- NEW ACTIONS ---
+    javaGenerator.forBlock['ez_action_ban'] = function(block) {
+        let target = javaGenerator.valueToCode(block, 'TARGET', javaGenerator.ORDER_ATOMIC);
+        const reason = javaGenerator.valueToCode(block, 'REASON', javaGenerator.ORDER_NONE) || '"Banned"';
+        
+        if (!target) target = getSmartMe(block);
+
+        return `        if (${target} instanceof Player) {
+            Bukkit.getBanList(org.bukkit.BanList.Type.NAME).addBan(((Player)${target}).getName(), ${reason}, null, null);
+            ((Player)${target}).kick(Component.text(${reason}));
+        }\n`;
+    };
+
+    javaGenerator.forBlock['ez_action_kick'] = function(block) {
+        let target = javaGenerator.valueToCode(block, 'TARGET', javaGenerator.ORDER_ATOMIC);
+        const reason = javaGenerator.valueToCode(block, 'REASON', javaGenerator.ORDER_NONE) || '"Kicked"';
+        
+        if (!target) target = getSmartMe(block);
+
+        return `        if (${target} instanceof Player) {
+            ((Player)${target}).kick(Component.text(${reason}));
+        }\n`;
+    };
+
+    javaGenerator.forBlock['ez_action_sound'] = function(block) {
+        let target = javaGenerator.valueToCode(block, 'TARGET', javaGenerator.ORDER_ATOMIC);
+        const sound = block.getFieldValue('SOUND');
+        
+        if (!target) target = getSmartMe(block);
+        
+        // Handle Entity vs Location
+        let locCode = generateSmartLoc(target);
+        return `        ${locCode}.getWorld().playSound(${locCode}, Sound.${sound}, 1.0f, 1.0f);\n`;
+    };
+
+    javaGenerator.forBlock['ez_action_particle'] = function(block) {
+        let target = javaGenerator.valueToCode(block, 'LOCATION', javaGenerator.ORDER_ATOMIC);
+        const particle = block.getFieldValue('PARTICLE');
+        
+        if (!target) target = getSmartMe(block);
+        let locCode = generateSmartLoc(target);
+        
+        return `        ${locCode}.getWorld().spawnParticle(Particle.${particle}, ${locCode}, 10);\n`;
     };
 
     // Dynamic Events
