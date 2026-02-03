@@ -29,214 +29,174 @@ const generateToolbox = () => {
     // Safety check
     if (!API_DATA) return { "kind": "categoryToolbox", "contents": [] };
     const { enums, events, methods, context_getters } = API_DATA;
+    const showApi = document.getElementById('toggle-api').checked;
 
     const contents = [];
 
-    // 1. Events
-    const eventBlocks = events.map(evt => ({
-        "kind": "block",
-        "type": `paper_event_${evt.id.toLowerCase()}`
-    }));
+    // 1. Events (Simplified)
+    const eventBlocks = [
+        { "kind": "block", "type": "paper_event" }, // Legacy generic
+        { "kind": "block", "type": "paper_event_entity_death" },
+        // Add dynamic simple events if needed, for now stick to manually defined EZ ones + Generic
+    ];
+    // Add dynamic events but filtered? No, let's just add them all under "Events" but maybe group them later.
+    // For "Scratch" feel, we want specific events like "When Join".
+    // Let's add the dynamic ones as they are useful.
+    events.forEach(evt => {
+        eventBlocks.push({ "kind": "block", "type": `paper_event_${evt.id.toLowerCase()}` });
+    });
+
     contents.push({
         "kind": "category",
         "name": "Events",
-        "colour": "230",
+        "colour": "0", // Red/Orange for triggers
         "contents": eventBlocks
     });
 
-    // 2. Commands
+    // 2. Control (Loops, Logic)
     contents.push({
         "kind": "category",
-        "name": "Commands",
-        "colour": "120",
+        "name": "Control",
+        "colour": "120", // Green/Loop color
         "contents": [
-            { "kind": "block", "type": "paper_command" },
-            { "kind": "block", "type": "paper_command_arg_get" },
-            { "kind": "block", "type": "paper_command_args_length" }
+            { "kind": "block", "type": "controls_if" },
+            { "kind": "block", "type": "controls_repeat_ext", "inputs": { "TIMES": { "shadow": { "type": "math_number", "fields": { "NUM": 10 } } } } },
+            { "kind": "block", "type": "controls_whileUntil" },
+            { "kind": "block", "type": "controls_for_simple", "inputs": { "FROM": { "shadow": { "type": "math_number", "fields": { "NUM": 1 } } }, "TO": { "shadow": { "type": "math_number", "fields": { "NUM": 10 } } } } },
+            // Add Wait block later
         ]
     });
 
-    // 3. Actions (Chat & UI)
+    // 3. Actions (Chat, Title, Sound, Particle, Commands)
     contents.push({
         "kind": "category",
         "name": "Actions",
-        "colour": "160",
+        "colour": "160", // Blue
         "contents": [
+            { "kind": "label", "text": "Communication" },
             { "kind": "block", "type": "ez_action_message" },
             { "kind": "block", "type": "ez_action_title" },
-            { "kind": "block", "type": "ez_action_give" }
+            { "kind": "block", "type": "ez_action_sound" },
+            { "kind": "block", "type": "ez_action_particle" },
+            { "kind": "label", "text": "Commands" },
+            { "kind": "block", "type": "paper_command" },
+            { "kind": "block", "type": "paper_command_arg_get" },
         ]
     });
 
-    // 3.5 Player
+    // 4. Player (Health, Inventory, Ban/Kick, Attributes)
     contents.push({
         "kind": "category",
         "name": "Player",
-        "colour": "260", 
+        "colour": "260", // Purple
         "contents": [
+             { "kind": "block", "type": "ez_val_me" },
+             { "kind": "block", "type": "ez_val_victim" },
+             { "kind": "block", "type": "ez_val_attacker" },
+             { "kind": "sep" },
+             { "kind": "block", "type": "ez_action_give" },
              { "kind": "block", "type": "ez_action_set_health" },
              { "kind": "block", "type": "ez_action_toggle_flight" },
-             { "kind": "block", "type": "paper_action_set_attribute" },
              { "kind": "block", "type": "ez_action_attribute_change" },
-             { "kind": "block", "type": "ez_expr_attribute_get" }
+             { "kind": "block", "type": "ez_expr_attribute_get" },
+             { "kind": "sep" },
+             { "kind": "block", "type": "ez_action_ban" },
+             { "kind": "block", "type": "ez_action_kick" }
         ]
     });
 
-    // 3.6 World
+    // 5. World (Blocks, Teleport, Explosions)
     contents.push({
         "kind": "category",
         "name": "World",
-        "colour": "30", 
+        "colour": "30", // Brown/Orange
         "contents": [
              { "kind": "block", "type": "ez_action_teleport" },
              { "kind": "block", "type": "ez_action_replace_block" },
              { "kind": "block", "type": "ez_action_spawn_lightning" },
-             { "kind": "block", "type": "ez_action_explosion" }
+             { "kind": "block", "type": "ez_action_explosion" },
+             { "kind": "sep" },
+             { "kind": "block", "type": "ez_val_location_of" },
+             { "kind": "block", "type": "ez_val_coords" }
         ]
     });
 
-    // 3.7 Data / Config (For TPA/Home)
+    // 6. Data (Variables, Math, Text, Global Map)
     contents.push({
         "kind": "category",
-        "name": "Data / Config",
-        "colour": "290",
+        "name": "Data",
+        "colour": "330", // Pink/Grey
         "contents": [
-             { "kind": "block", "type": "ez_config_set" },
-             { "kind": "block", "type": "ez_config_get" },
-             { "kind": "block", "type": "ez_data_set_global" },
-             { "kind": "block", "type": "ez_data_get_global" },
-             { "kind": "block", "type": "ez_convert_to_string" },
-             { "kind": "block", "type": "ez_convert_to_number" }
-        ]
-    });
-
-    // 3.8 Fun / Troll / Admin
-    contents.push({
-        "kind": "category",
-        "name": "Fun & Admin",
-        "colour": "0",
-        "contents": [
-             { "kind": "block", "type": "paper_event_entity_death" },
-             { "kind": "block", "type": "ez_val_victim" },
-             { "kind": "block", "type": "ez_val_attacker" },
-             { "kind": "block", "type": "ez_action_ban" },
-             { "kind": "block", "type": "ez_action_kick" },
-             { "kind": "block", "type": "ez_action_sound" },
-             { "kind": "block", "type": "ez_action_particle" }
-        ]
-    });
-
-    // 4. My Data
-    contents.push({
-        "kind": "category",
-        "name": "My Data",
-        "colour": "290",
-        "contents": [
-            { "kind": "block", "type": "ez_val_me" },
+            { "kind": "label", "text": "Variables" },
             { "kind": "block", "type": "var_declare_typed" },
             { "kind": "block", "type": "var_set_typed" },
-            { "kind": "block", "type": "var_get_typed" }
-        ]
-    });
-
-    // 5. Logic
-    contents.push({
-        "kind": "category",
-        "name": "Logic",
-        "colour": "210",
-        "contents": [
-            { "kind": "block", "type": "controls_if" },
-            { "kind": "block", "type": "logic_compare" },
-            { "kind": "block", "type": "logic_operation" },
-            { "kind": "block", "type": "logic_negate" },
-            { "kind": "block", "type": "logic_boolean" },
-            { "kind": "block", "type": "logic_is_type" }
-        ]
-    });
-
-    // 6. Loops
-    contents.push({
-        "kind": "category",
-        "name": "Loops",
-        "colour": "120",
-        "contents": [
-            { "kind": "block", "type": "controls_repeat_ext", "inputs": { "TIMES": { "shadow": { "type": "math_number", "fields": { "NUM": 10 } } } } },
-            { "kind": "block", "type": "controls_whileUntil" },
-            { "kind": "block", "type": "controls_for_simple", "inputs": { "FROM": { "shadow": { "type": "math_number", "fields": { "NUM": 1 } } }, "TO": { "shadow": { "type": "math_number", "fields": { "NUM": 10 } } } } }
-        ]
-    });
-
-    // 6.5 Lists
-    contents.push({
-        "kind": "category",
-        "name": "Lists",
-        "colour": "260",
-        "contents": [
-            { "kind": "block", "type": "lists_create_new" },
-            { "kind": "block", "type": "lists_add" },
-            { "kind": "block", "type": "lists_get_index" },
-            { "kind": "block", "type": "lists_size" }
-        ]
-    });
-
-    // 7. Math
-    contents.push({
-        "kind": "category",
-        "name": "Math",
-        "colour": "230",
-        "contents": [
+            { "kind": "block", "type": "var_get_typed" },
+            { "kind": "block", "type": "ez_data_set_global" },
+            { "kind": "block", "type": "ez_data_get_global" },
+            { "kind": "label", "text": "Math & Logic" },
             { "kind": "block", "type": "math_number" },
             { "kind": "block", "type": "math_arithmetic" },
-            { "kind": "block", "type": "text_string" }
+            { "kind": "block", "type": "logic_compare" },
+            { "kind": "block", "type": "logic_operation" },
+            { "kind": "block", "type": "logic_boolean" },
+            { "kind": "label", "text": "Text" },
+            { "kind": "block", "type": "text_string" },
+            { "kind": "block", "type": "ez_convert_to_string" },
+            { "kind": "block", "type": "ez_convert_to_number" }
         ]
     });
-    
-    // 8. Locations
+
+    // 7. Files (Config)
     contents.push({
         "kind": "category",
-        "name": "Locations",
-        "colour": "290",
+        "name": "Files",
+        "colour": "290", 
         "contents": [
-             { "kind": "block", "type": "ez_val_location_of" },
-             { "kind": "block", "type": "ez_val_coords" },
-             { "kind": "block", "type": "paper_method_get_spawn_location" } 
+             { "kind": "block", "type": "ez_config_set" },
+             { "kind": "block", "type": "ez_config_get" }
         ]
     });
 
-    // --- SEPARATOR ---
-    contents.push({ "kind": "sep" });
+    // --- API CATEGORIES (Hidden by default) ---
+    if (showApi) {
+        contents.push({ "kind": "sep" });
+        contents.push({ "kind": "label", "text": "Raw API Access" });
 
-    // --- API CATEGORIES (Flattened for Safety) ---
-    
-    // Group methods
-    const methodsByTarget = {};
-    methods.forEach(m => {
-        let target = m.target || "Utils";
-        if (m.method.startsWith('event.')) target = "Event Control";
-        if (!methodsByTarget[target]) methodsByTarget[target] = [];
-        
-        const cleanName = m.name.toLowerCase().replace(/[^a-z0-9]/g, '_');
-        methodsByTarget[target].push({
-            "kind": "block",
-            "type": `paper_method_${cleanName}`
+        const methodsByTarget = {};
+        methods.forEach(m => {
+            let target = m.target || "Utils";
+            if (m.method.startsWith('event.')) target = "Event Control";
+            if (!methodsByTarget[target]) methodsByTarget[target] = [];
+            
+            const cleanName = m.name.toLowerCase().replace(/[^a-z0-9]/g, '_');
+            methodsByTarget[target].push({
+                "kind": "block",
+                "type": `paper_method_${cleanName}`
+            });
         });
-    });
 
-    Object.keys(methodsByTarget).forEach(target => {
-        let color = "0";
-        if (target === "Event Control") color = "230";
-        else if (API_DATA.types[target]) color = API_DATA.types[target].color;
-        
-        contents.push({
-            "kind": "category",
-            "name": `API: ${target}`,
-            "colour": color.toString(),
-            "contents": methodsByTarget[target]
+        Object.keys(methodsByTarget).forEach(target => {
+            let color = "0";
+            if (target === "Event Control") color = "230";
+            else if (API_DATA.types[target]) color = API_DATA.types[target].color;
+            
+            contents.push({
+                "kind": "category",
+                "name": `API: ${target}`,
+                "colour": color.toString(),
+                "contents": methodsByTarget[target]
+            });
         });
-    });
+    }
 
     return { "kind": "categoryToolbox", "contents": contents };
 };
+
+// Toggle Listener
+document.getElementById('toggle-api').addEventListener('change', () => {
+    workspace.updateToolbox(generateToolbox());
+});
+
 // --- SEARCH LOGIC ---
 const handleSearch = (e) => {
     const term = e.target.value.toLowerCase();

@@ -148,13 +148,180 @@ export const defineBlocks = () => {
         'paper_command': {
             init: function() {
                 this.appendDummyInput()
-                    .appendField("Define Command /")
+                    .appendField("New Command /")
                     .appendField(new Blockly.FieldTextInput("mycommand"), "CMD_NAME");
                 this.appendStatementInput("DO")
                     .setCheck(null)
-                    .appendField("execute");
+                    .appendField("do");
                 this.setColour(120); // Green
-                this.setTooltip("Creates a new command.");
+                this.setTooltip("Creates a command that players can type.");
+            }
+        }
+    });
+
+    // --- CONTROL ---
+    Blockly.common.defineBlocks({
+        'ez_control_wait': {
+            init: function() {
+                this.appendValueInput("SECONDS")
+                    .setCheck("Number")
+                    .appendField("Wait");
+                this.appendDummyInput()
+                    .appendField("seconds");
+                this.appendStatementInput("DO")
+                    .setCheck(null)
+                    .appendField("then do");
+                this.setPreviousStatement(true, null);
+                this.setNextStatement(true, null);
+                this.setColour(120);
+                this.setTooltip("Pauses for a moment before doing the next thing.");
+            }
+        }
+    });
+
+    // --- POTION EFFECTS ---
+    Blockly.common.defineBlocks({
+        'ez_action_effect_add': {
+            init: function() {
+                this.appendValueInput("TARGET")
+                    .setCheck(["Player", "LivingEntity"])
+                    .appendField("Give Effect");
+                this.appendDummyInput()
+                    .appendField(new Blockly.FieldDropdown([
+                        ["Speed", "SPEED"],
+                        ["Slowness", "SLOW"],
+                        ["Haste", "FAST_DIGGING"],
+                        ["Strength", "INCREASE_DAMAGE"],
+                        ["Jump Boost", "JUMP"],
+                        ["Regeneration", "REGENERATION"],
+                        ["Fire Resistance", "FIRE_RESISTANCE"],
+                        ["Water Breathing", "WATER_BREATHING"],
+                        ["Invisibility", "INVISIBILITY"],
+                        ["Blindness", "BLINDNESS"],
+                        ["Night Vision", "NIGHT_VISION"],
+                        ["Hunger", "HUNGER"],
+                        ["Weakness", "WEAKNESS"],
+                        ["Poison", "POISON"],
+                        ["Wither", "WITHER"],
+                        ["Glowing", "GLOWING"],
+                        ["Levitation", "LEVITATION"],
+                        ["Slow Falling", "SLOW_FALLING"]
+                    ]), "EFFECT");
+                this.appendValueInput("DURATION")
+                    .setCheck("Number")
+                    .appendField("for");
+                this.appendDummyInput()
+                    .appendField("seconds");
+                this.appendValueInput("AMPLIFIER")
+                    .setCheck("Number")
+                    .appendField("Level (1-255)");
+                this.setPreviousStatement(true, null);
+                this.setNextStatement(true, null);
+                this.setColour(160);
+            }
+        }
+    });
+
+    Blockly.common.defineBlocks({
+        'ez_action_effect_clear': {
+            init: function() {
+                this.appendValueInput("TARGET")
+                    .setCheck(["Player", "LivingEntity"])
+                    .appendField("Clear All Effects from");
+                this.setPreviousStatement(true, null);
+                this.setNextStatement(true, null);
+                this.setColour(160);
+            }
+        }
+    });
+
+    // --- INVENTORY ---
+    Blockly.common.defineBlocks({
+        'ez_action_inventory_clear': {
+            init: function() {
+                this.appendValueInput("TARGET")
+                    .setCheck(["Player"])
+                    .appendField("Clear Inventory of");
+                this.setPreviousStatement(true, null);
+                this.setNextStatement(true, null);
+                this.setColour(160);
+            }
+        }
+    });
+
+    Blockly.common.defineBlocks({
+        'ez_action_inventory_has': {
+            init: function() {
+                this.appendValueInput("TARGET")
+                    .setCheck(["Player"])
+                    .appendField("Does");
+                this.appendDummyInput()
+                    .appendField("have item")
+                    .appendField(new Blockly.FieldDropdown([
+                        ["Diamond", "DIAMOND"],
+                        ["Dirt", "DIRT"],
+                        ["Stone", "STONE"],
+                        ["Iron Ingot", "IRON_INGOT"],
+                        ["Gold Ingot", "GOLD_INGOT"],
+                        ["Apple", "APPLE"],
+                        ["TNT", "TNT"]
+                    ]), "ITEM");
+                this.appendDummyInput()
+                    .appendField("?");
+                this.setOutput(true, "Boolean");
+                this.setColour(210);
+            }
+        }
+    });
+
+    // --- WORLD (Time/Weather) ---
+    Blockly.common.defineBlocks({
+        'ez_action_set_time': {
+            init: function() {
+                this.appendDummyInput()
+                    .appendField("Set Time to")
+                    .appendField(new Blockly.FieldDropdown([
+                        ["Day", "1000"],
+                        ["Noon", "6000"],
+                        ["Sunset", "12000"],
+                        ["Night", "13000"],
+                        ["Midnight", "18000"]
+                    ]), "TIME");
+                this.setPreviousStatement(true, null);
+                this.setNextStatement(true, null);
+                this.setColour(30);
+            }
+        }
+    });
+
+    Blockly.common.defineBlocks({
+        'ez_action_set_weather': {
+            init: function() {
+                this.appendDummyInput()
+                    .appendField("Set Weather to")
+                    .appendField(new Blockly.FieldDropdown([
+                        ["Clear", "CLEAR"],
+                        ["Rain", "DOWNFALL"],
+                        ["Thunder", "THUNDER"]
+                    ]), "WEATHER");
+                this.setPreviousStatement(true, null);
+                this.setNextStatement(true, null);
+                this.setColour(30);
+            }
+        }
+    });
+    
+    // --- SERVER ---
+    Blockly.common.defineBlocks({
+        'ez_action_console_command': {
+            init: function() {
+                this.appendValueInput("CMD")
+                    .setCheck(null)
+                    .appendField("Run Console Command");
+                this.setPreviousStatement(true, null);
+                this.setNextStatement(true, null);
+                this.setColour(0);
+                this.setTooltip("Runs a command as the server console (OP).");
             }
         }
     });
@@ -187,14 +354,14 @@ export const defineBlocks = () => {
 
     // --- VARIABLES (Typed) ---
     const VAR_TYPES = [
-        ["String", "String"],
-        ["Number (int)", "int"],
-        ["Decimal (double)", "double"],
-        ["Boolean", "boolean"],
+        ["Text", "String"],
+        ["Number", "int"],
+        ["Decimal", "double"],
+        ["Boolean (True/False)", "boolean"],
         ["Player", "Player"],
         ["Entity", "Entity"],
         ["Location", "Location"],
-        ["ItemStack", "ItemStack"],
+        ["Item", "ItemStack"],
         ["List", "List"]
     ];
 
@@ -464,14 +631,14 @@ export const defineBlocks = () => {
             init: function() {
                 this.appendValueInput("PATH")
                     .setCheck(null)
-                    .appendField("Save Data to Config");
+                    .appendField("Save to Settings");
                 this.appendValueInput("VALUE")
                     .setCheck(null)
                     .appendField("Value");
                 this.setPreviousStatement(true, null);
                 this.setNextStatement(true, null);
                 this.setColour(290);
-                this.setTooltip("Saves data to config.yml (Saved forever). Use for /sethome.");
+                this.setTooltip("Saves data to config.yml (Saved forever).");
             }
         }
     });
@@ -481,7 +648,7 @@ export const defineBlocks = () => {
             init: function() {
                 this.appendValueInput("PATH")
                     .setCheck(null)
-                    .appendField("Read Data from Config");
+                    .appendField("Read Setting");
                 this.setOutput(true, null);
                 this.setColour(290);
                 this.setTooltip("Reads data from config.yml.");
@@ -495,7 +662,7 @@ export const defineBlocks = () => {
             init: function() {
                 this.appendValueInput("KEY")
                     .setCheck(null)
-                    .appendField("Set Server Variable");
+                    .appendField("Set Global Data");
                 this.appendValueInput("VALUE")
                     .setCheck(null)
                     .appendField("to");
@@ -512,7 +679,7 @@ export const defineBlocks = () => {
             init: function() {
                 this.appendValueInput("KEY")
                     .setCheck(null)
-                    .appendField("Get Server Variable");
+                    .appendField("Get Global Data");
                 this.setOutput(true, null);
                 this.setColour(290);
                 this.setTooltip("Gets data from server memory.");

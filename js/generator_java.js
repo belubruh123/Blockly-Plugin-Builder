@@ -384,6 +384,87 @@ export const initJavaGenerator = () => {
         return code;
     };
 
+    // --- CONTROL ---
+    javaGenerator.forBlock['ez_control_wait'] = function(block) {
+        const seconds = javaGenerator.valueToCode(block, 'SECONDS', javaGenerator.ORDER_NONE) || '1';
+        const branch = javaGenerator.statementToCode(block, 'DO');
+        
+        // 20 ticks = 1 second
+        return `        new org.bukkit.scheduler.BukkitRunnable() {
+            @Override
+            public void run() {
+${branch}
+            }
+        }.runTaskLater(Main.getPlugin(Main.class), (long)(${seconds} * 20));\n`;
+    };
+
+    // --- POTION EFFECTS ---
+    javaGenerator.forBlock['ez_action_effect_add'] = function(block) {
+        let target = javaGenerator.valueToCode(block, 'TARGET', javaGenerator.ORDER_ATOMIC);
+        const effect = block.getFieldValue('EFFECT');
+        const duration = javaGenerator.valueToCode(block, 'DURATION', javaGenerator.ORDER_NONE) || '10';
+        const amplifier = javaGenerator.valueToCode(block, 'AMPLIFIER', javaGenerator.ORDER_NONE) || '1';
+        
+        if (!target) target = getSmartMe(block);
+
+        return `        if (${target} instanceof LivingEntity) {
+            ((LivingEntity)${target}).addPotionEffect(new org.bukkit.potion.PotionEffect(org.bukkit.potion.PotionEffectType.${effect}, (int)(${duration} * 20), (int)(${amplifier} - 1)));
+        }\n`;
+    };
+
+    javaGenerator.forBlock['ez_action_effect_clear'] = function(block) {
+        let target = javaGenerator.valueToCode(block, 'TARGET', javaGenerator.ORDER_ATOMIC);
+        if (!target) target = getSmartMe(block);
+        
+        return `        if (${target} instanceof LivingEntity) {
+            for (org.bukkit.potion.PotionEffect effect : ((LivingEntity)${target}).getActivePotionEffects()) {
+                ((LivingEntity)${target}).removePotionEffect(effect.getType());
+            }
+        }\n`;
+    };
+
+    // --- INVENTORY ---
+    javaGenerator.forBlock['ez_action_inventory_clear'] = function(block) {
+        let target = javaGenerator.valueToCode(block, 'TARGET', javaGenerator.ORDER_ATOMIC);
+        if (!target) target = getSmartMe(block);
+        
+        return `        if (${target} instanceof Player) {
+            ((Player)${target}).getInventory().clear();
+        }\n`;
+    };
+
+    javaGenerator.forBlock['ez_action_inventory_has'] = function(block) {
+        let target = javaGenerator.valueToCode(block, 'TARGET', javaGenerator.ORDER_ATOMIC);
+        const item = block.getFieldValue('ITEM');
+        
+        if (!target) target = getSmartMe(block);
+        
+        const code = `(${target} instanceof Player && ((Player)${target}).getInventory().contains(Material.${item}))`;
+        return [code, javaGenerator.ORDER_ATOMIC];
+    };
+
+    // --- WORLD ---
+    javaGenerator.forBlock['ez_action_set_time'] = function(block) {
+        const time = block.getFieldValue('TIME');
+        // Need a world. Use smart me context.
+        return `        Bukkit.getWorlds().get(0).setTime(${time});\n`; // Default to main world for simplicity
+    };
+
+    javaGenerator.forBlock['ez_action_set_weather'] = function(block) {
+        const weather = block.getFieldValue('WEATHER');
+        const isStorm = (weather === "DOWNFALL" || weather === "THUNDER");
+        const isThunder = (weather === "THUNDER");
+        
+        return `        Bukkit.getWorlds().get(0).setStorm(${isStorm});
+        Bukkit.getWorlds().get(0).setThundering(${isThunder});\n`;
+    };
+    
+    // --- SERVER ---
+    javaGenerator.forBlock['ez_action_console_command'] = function(block) {
+        const cmd = javaGenerator.valueToCode(block, 'CMD', javaGenerator.ORDER_NONE) || '""';
+        return `        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), ${cmd});\n`;
+    };
+
     // --- LOOPS (For) ---
     javaGenerator.forBlock['controls_for_simple'] = function(block) {
         const variable = block.getFieldValue('VAR');
