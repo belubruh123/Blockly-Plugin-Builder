@@ -423,6 +423,30 @@ ${branch}
         }\n`;
     };
 
+    // --- GAMEMODE ---
+    javaGenerator.forBlock['ez_action_set_gamemode'] = function(block) {
+        let target = javaGenerator.valueToCode(block, 'TARGET', javaGenerator.ORDER_ATOMIC);
+        const mode = block.getFieldValue('MODE');
+        
+        if (!target) target = getSmartMe(block);
+        
+        return `        if (${target} instanceof Player) {
+            ((Player)${target}).setGameMode(GameMode.${mode});
+        }\n`;
+    };
+
+    // --- PROJECTILE ---
+    javaGenerator.forBlock['ez_action_launch_projectile'] = function(block) {
+        let target = javaGenerator.valueToCode(block, 'TARGET', javaGenerator.ORDER_ATOMIC);
+        const proj = block.getFieldValue('PROJ');
+        
+        if (!target) target = getSmartMe(block);
+        
+        return `        if (${target} instanceof LivingEntity) {
+            ((LivingEntity)${target}).launchProjectile(${proj}.class);
+        }\n`;
+    };
+
     // --- INVENTORY ---
     javaGenerator.forBlock['ez_action_inventory_clear'] = function(block) {
         let target = javaGenerator.valueToCode(block, 'TARGET', javaGenerator.ORDER_ATOMIC);

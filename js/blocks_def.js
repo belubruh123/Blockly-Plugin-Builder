@@ -572,6 +572,51 @@ export const defineBlocks = () => {
         }
     });
 
+    // --- GAME MODE ---
+    Blockly.common.defineBlocks({
+        'ez_action_set_gamemode': {
+            init: function() {
+                this.appendValueInput("TARGET")
+                    .setCheck(["Player"])
+                    .appendField("Set Game Mode of");
+                this.appendDummyInput()
+                    .appendField("to")
+                    .appendField(new Blockly.FieldDropdown([
+                        ["Survival", "SURVIVAL"],
+                        ["Creative", "CREATIVE"],
+                        ["Adventure", "ADVENTURE"],
+                        ["Spectator", "SPECTATOR"]
+                    ]), "MODE");
+                this.setPreviousStatement(true, null);
+                this.setNextStatement(true, null);
+                this.setColour(160);
+            }
+        }
+    });
+
+    // --- PROJECTILES ---
+    Blockly.common.defineBlocks({
+        'ez_action_launch_projectile': {
+            init: function() {
+                this.appendValueInput("TARGET")
+                    .setCheck(["Player", "LivingEntity"])
+                    .appendField("Make");
+                this.appendDummyInput()
+                    .appendField("shoot a")
+                    .appendField(new Blockly.FieldDropdown([
+                        ["Arrow", "Arrow"],
+                        ["Snowball", "Snowball"],
+                        ["Egg", "Egg"],
+                        ["Fireball", "LargeFireball"],
+                        ["Trident", "Trident"]
+                    ]), "PROJ");
+                this.setPreviousStatement(true, null);
+                this.setNextStatement(true, null);
+                this.setColour(160);
+            }
+        }
+    });
+
     // --- EASY MODE: DATA ---
 
     // 4. "ME" (Smart Context)
