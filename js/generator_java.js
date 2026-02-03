@@ -162,6 +162,11 @@ export const initJavaGenerator = () => {
         return [getSmartMe(block), javaGenerator.ORDER_ATOMIC];
     };
 
+    javaGenerator.forBlock['ez_val_player_by_name'] = function(block) {
+        const name = javaGenerator.valueToCode(block, 'NAME', javaGenerator.ORDER_ATOMIC) || '""';
+        return [`Bukkit.getPlayer(${name})`, javaGenerator.ORDER_ATOMIC];
+    };
+
     javaGenerator.forBlock['ez_action_message'] = function(block) {
         const msg = javaGenerator.valueToCode(block, 'MSG', javaGenerator.ORDER_NONE) || '""';
         let target = javaGenerator.valueToCode(block, 'TARGET', javaGenerator.ORDER_ATOMIC);

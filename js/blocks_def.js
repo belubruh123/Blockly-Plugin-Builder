@@ -897,6 +897,20 @@ export const defineBlocks = (apiData) => {
         }
     });
 
+    // Get Player by Name
+    Blockly.common.defineBlocks({
+        'ez_val_player_by_name': {
+            init: function() {
+                this.appendValueInput("NAME")
+                    .setCheck("String")
+                    .appendField("Get Player by Name");
+                this.setOutput(true, "Player");
+                this.setColour(290);
+                this.setTooltip("Gets an online player by their username.");
+            }
+        }
+    });
+
     // 5. Location of Entity
     Blockly.common.defineBlocks({
         'ez_val_location_of': {

@@ -126,6 +126,10 @@ const generateToolbox = () => {
     // 3. PLAYER
     const playerCat = [];
     playerCat.push({ "kind": "block", "type": "ez_val_me" });
+    playerCat.push({
+        "kind": "block", "type": "ez_val_player_by_name",
+        "inputs": { "NAME": { "shadow": { "type": "text_string", "fields": { "TEXT": "Steve" } } } }
+    });
     playerCat.push({ "kind": "block", "type": "ez_val_player_ping" });
     playerCat.push({
         "kind": "block", "type": "ez_action_give",
@@ -320,10 +324,29 @@ const handleSearch = (e) => {
         itemList.forEach(item => {
             if (item.kind === "block") {
                 let match = item.type.toLowerCase().includes(term);
+                
+                // Try to get the block definition to search its text
+                if (!match) {
+                    try {
+                        const blockDef = Blockly.Blocks[item.type];
+                        if (blockDef) {
+                            // Create a temporary block to get its text
+                            const tempBlock = workspace.newBlock(item.type);
+                            const blockText = tempBlock.toString().toLowerCase();
+                            tempBlock.dispose();
+                            if (blockText.includes(term)) match = true;
+                        }
+                    } catch (e) {
+                        // Ignore errors from blocks that can't be instantiated
+                    }
+                }
+                
+                // Special handling for API blocks
                 if (!match && item.type.startsWith('paper_method_')) {
                      const apiName = item.type.replace('paper_method_', '').replace(/_/g, ' ');
                      if (apiName.includes(term)) match = true;
                 }
+                
                 if (match) flatContents.push(item);
             } else if (item.kind === "category") {
                 extractBlocks(item.contents);
